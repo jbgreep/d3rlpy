@@ -1,6 +1,6 @@
 import argparse
 
-import d3rlpy
+import d3rlpy_marin
 
 ACTION_FLEXIBILITY = {
     "walker2d-random-v0": 0.05,
@@ -26,19 +26,19 @@ def main() -> None:
     parser.add_argument("--compile", action="store_true")
     args = parser.parse_args()
 
-    dataset, env = d3rlpy.datasets.get_dataset(args.dataset)
+    dataset, env = d3rlpy_marin.datasets.get_dataset(args.dataset)
 
     # fix seed
-    d3rlpy.seed(args.seed)
-    d3rlpy.envs.seed_env(env, args.seed)
+    d3rlpy_marin.seed(args.seed)
+    d3rlpy_marin.envs.seed_env(env, args.seed)
 
     if "medium-replay" in args.dataset:
-        vae_encoder = d3rlpy.models.encoders.VectorEncoderFactory([128, 128])
+        vae_encoder = d3rlpy_marin.models.encoders.VectorEncoderFactory([128, 128])
     else:
-        vae_encoder = d3rlpy.models.encoders.VectorEncoderFactory([750, 750])
-    encoder = d3rlpy.models.encoders.VectorEncoderFactory([400, 300])
+        vae_encoder = d3rlpy_marin.models.encoders.VectorEncoderFactory([750, 750])
+    encoder = d3rlpy_marin.models.encoders.VectorEncoderFactory([400, 300])
 
-    plas = d3rlpy.algos.PLASWithPerturbationConfig(
+    plas = d3rlpy_marin.algos.PLASWithPerturbationConfig(
         actor_learning_rate=1e-4,
         actor_encoder_factory=encoder,
         critic_learning_rate=1e-3,
@@ -57,7 +57,7 @@ def main() -> None:
         n_steps=1000000,  # RL starts at 500000 step
         n_steps_per_epoch=1000,
         save_interval=10,
-        evaluators={"environment": d3rlpy.metrics.EnvironmentEvaluator(env)},
+        evaluators={"environment": d3rlpy_marin.metrics.EnvironmentEvaluator(env)},
         experiment_name=f"PLASWithPerturbation_{args.dataset}_{args.seed}",
     )
 

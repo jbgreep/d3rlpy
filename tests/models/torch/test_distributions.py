@@ -5,7 +5,7 @@ import torch
 import torch.nn.functional as F
 from torch.distributions import Normal
 
-from d3rlpy.models.torch.distributions import (
+from d3rlpy_marin.models.torch.distributions import (
     GaussianDistribution,
     SquashedGaussianDistribution,
 )
@@ -14,9 +14,7 @@ from d3rlpy.models.torch.distributions import (
 @pytest.mark.parametrize("action_size", [2])
 @pytest.mark.parametrize("batch_size", [32])
 @pytest.mark.parametrize("n", [100])
-def test_gaussian_distribution(
-    action_size: int, batch_size: int, n: int
-) -> None:
+def test_gaussian_distribution(action_size: int, batch_size: int, n: int) -> None:
     mean = torch.rand(batch_size, action_size)
     std = torch.rand(batch_size, action_size).exp()
     dist = GaussianDistribution(torch.tanh(mean), std, raw_loc=mean)
@@ -41,9 +39,7 @@ def test_gaussian_distribution(
     assert y.shape == (batch_size, n, action_size)
 
     y, log_prob = dist.sample_n_with_log_prob(n)
-    ref_log_prob = ref_dist.log_prob(y.transpose(0, 1)).sum(
-        dim=2, keepdims=True
-    )
+    ref_log_prob = ref_dist.log_prob(y.transpose(0, 1)).sum(dim=2, keepdims=True)
     assert y.shape == (batch_size, n, action_size)
     assert log_prob.shape == (batch_size, n, 1)
     assert torch.allclose(log_prob, ref_log_prob.transpose(0, 1))

@@ -8,13 +8,17 @@ import numpy as np
 import pytest
 import torch
 
-from d3rlpy.dataset import TrajectoryMiniBatch, Transition, TransitionMiniBatch
-from d3rlpy.optimizers import OptimizerWrapper
-from d3rlpy.optimizers.lr_schedulers import (
+from d3rlpy_marin.dataset import (
+    TrajectoryMiniBatch,
+    Transition,
+    TransitionMiniBatch,
+)
+from d3rlpy_marin.optimizers import OptimizerWrapper
+from d3rlpy_marin.optimizers.lr_schedulers import (
     CosineAnnealingLRFactory,
     LRSchedulerFactory,
 )
-from d3rlpy.torch_utility import (
+from d3rlpy_marin.torch_utility import (
     GEGLU,
     Checkpointer,
     Modules,
@@ -308,24 +312,17 @@ def test_torch_mini_batch(
     assert isinstance(torch_batch.observations, torch.Tensor)
     assert isinstance(torch_batch.next_observations, torch.Tensor)
     if use_observation_scaler:
+        assert np.all(torch_batch.observations.numpy() == batch.observations + 0.1)
         assert np.all(
-            torch_batch.observations.numpy() == batch.observations + 0.1
-        )
-        assert np.all(
-            torch_batch.next_observations.numpy()
-            == batch.next_observations + 0.1
+            torch_batch.next_observations.numpy() == batch.next_observations + 0.1
         )
     else:
         assert np.all(torch_batch.observations.numpy() == batch.observations)
-        assert np.all(
-            torch_batch.next_observations.numpy() == batch.next_observations
-        )
+        assert np.all(torch_batch.next_observations.numpy() == batch.next_observations)
 
     if use_action_scaler:
         assert np.all(torch_batch.actions.numpy() == batch.actions + 0.2)
-        assert np.all(
-            torch_batch.next_actions.numpy() == batch.next_actions + 0.2
-        )
+        assert np.all(torch_batch.next_actions.numpy() == batch.next_actions + 0.2)
     else:
         assert np.all(torch_batch.actions.numpy() == batch.actions)
         assert np.all(torch_batch.next_actions.numpy() == batch.next_actions)
@@ -335,9 +332,7 @@ def test_torch_mini_batch(
     else:
         assert np.all(torch_batch.rewards.numpy() == batch.rewards)
 
-    assert np.allclose(
-        torch_batch.returns_to_go.numpy(), np.array(ref_returns_to_go)
-    )
+    assert np.allclose(torch_batch.returns_to_go.numpy(), np.array(ref_returns_to_go))
     assert np.all(torch_batch.terminals.numpy() == batch.terminals)
     assert np.all(torch_batch.intervals.numpy() == batch.intervals)
 
@@ -356,9 +351,7 @@ def test_torch_mini_batch(
     assert torch.all(torch_batch2.observations == torch_batch.observations)
     assert torch.all(torch_batch2.actions == torch_batch.actions)
     assert torch.all(torch_batch2.rewards == torch_batch.rewards)
-    assert torch.all(
-        torch_batch2.next_observations == torch_batch.next_observations
-    )
+    assert torch.all(torch_batch2.next_observations == torch_batch.next_observations)
     assert torch.all(torch_batch2.next_actions == torch_batch.next_actions)
     assert torch.all(torch_batch2.returns_to_go == torch_batch.returns_to_go)
     assert torch.all(torch_batch2.terminals == torch_batch.terminals)
@@ -383,9 +376,7 @@ def test_torch_trajectory_mini_batch(
 ) -> None:
     trajectories = []
     for _ in range(batch_size):
-        trajectory = create_partial_trajectory(
-            observation_shape, action_size, length
-        )
+        trajectory = create_partial_trajectory(observation_shape, action_size, length)
         trajectories.append(trajectory)
 
     if use_observation_scaler:
@@ -416,9 +407,7 @@ def test_torch_trajectory_mini_batch(
     assert isinstance(batch.observations, np.ndarray)
     assert isinstance(torch_batch.observations, torch.Tensor)
     if use_observation_scaler:
-        assert np.all(
-            torch_batch.observations.numpy() == batch.observations + 0.1
-        )
+        assert np.all(torch_batch.observations.numpy() == batch.observations + 0.1)
     else:
         assert np.all(torch_batch.observations.numpy() == batch.observations)
 
@@ -429,9 +418,7 @@ def test_torch_trajectory_mini_batch(
 
     if use_reward_scaler:
         assert np.all(torch_batch.rewards.numpy() == batch.rewards + 0.3)
-        assert np.all(
-            torch_batch.returns_to_go.numpy() == batch.returns_to_go + 0.3
-        )
+        assert np.all(torch_batch.returns_to_go.numpy() == batch.returns_to_go + 0.3)
     else:
         assert np.all(torch_batch.rewards.numpy() == batch.rewards)
         assert np.all(torch_batch.returns_to_go.numpy() == batch.returns_to_go)
@@ -468,8 +455,7 @@ def test_torch_trajectory_mini_batch(
         == torch_batch.observations[:, 1:].reshape(-1, *observation_shape)
     )
     assert torch.all(
-        transition_batch.actions
-        == torch_batch.actions[:, :-1].reshape(-1, action_size)
+        transition_batch.actions == torch_batch.actions[:, :-1].reshape(-1, action_size)
     )
     assert torch.all(
         transition_batch.next_actions
@@ -479,8 +465,7 @@ def test_torch_trajectory_mini_batch(
         transition_batch.rewards == torch_batch.rewards[:, :-1].reshape(-1, 1)
     )
     assert torch.all(
-        transition_batch.terminals
-        == torch_batch.terminals[:, :-1].reshape(-1, 1)
+        transition_batch.terminals == torch_batch.terminals[:, :-1].reshape(-1, 1)
     )
     assert torch.all(
         transition_batch.returns_to_go
@@ -507,9 +492,7 @@ def test_torch_trajectory_mini_batch(
     assert torch.all(torch_batch2.masks == torch_batch.masks)
 
 
-@pytest.mark.parametrize(
-    "lr_scheduler_factory", [None, CosineAnnealingLRFactory(100)]
-)
+@pytest.mark.parametrize("lr_scheduler_factory", [None, CosineAnnealingLRFactory(100)])
 def test_checkpointer(
     lr_scheduler_factory: Optional[LRSchedulerFactory],
 ) -> None:
@@ -546,9 +529,7 @@ def test_checkpointer(
     params_2 = list(fc1_2.parameters())
     raw_optim_2 = torch.optim.Adam(params_2)
     lr_scheduler_2 = (
-        lr_scheduler_factory.create(raw_optim_2)
-        if lr_scheduler_factory
-        else None
+        lr_scheduler_factory.create(raw_optim_2) if lr_scheduler_factory else None
     )
     optim_2 = OptimizerWrapper(
         params_2, raw_optim_2, lr_scheduler=lr_scheduler_2, compiled=False

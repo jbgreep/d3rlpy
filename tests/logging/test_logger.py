@@ -3,8 +3,8 @@ from typing import Any
 import pytest
 from torch import nn
 
-from d3rlpy.logging import D3RLPyLogger
-from d3rlpy.logging.logger import AlgProtocol, SaveProtocol
+from d3rlpy_marin.logging import D3RLPyLogger
+from d3rlpy_marin.logging.logger import AlgProtocol, SaveProtocol
 
 
 class StubLoggerAdapter:
@@ -24,9 +24,7 @@ class StubLoggerAdapter:
     def before_write_metric(self, epoch: int, step: int) -> None:
         self.is_before_write_metric_called = True
 
-    def write_metric(
-        self, epoch: int, step: int, name: str, value: float
-    ) -> None:
+    def write_metric(self, epoch: int, step: int, name: str, value: float) -> None:
         assert self.is_before_write_metric_called
         self.is_write_metric_called = True
 

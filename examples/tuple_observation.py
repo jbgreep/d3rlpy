@@ -3,9 +3,9 @@ import argparse
 import torch
 from torch import nn
 
-import d3rlpy
-from d3rlpy.models.torch import Encoder, EncoderWithAction
-from d3rlpy.types import Shape, TorchObservation
+import d3rlpy_marin
+from d3rlpy_marin.models.torch import Encoder, EncoderWithAction
+from d3rlpy_marin.types import Shape, TorchObservation
 
 
 class TupleEncoder(Encoder):
@@ -34,15 +34,13 @@ class TupleEncoderWithAction(EncoderWithAction):
         self.fc2 = nn.Linear(shape2[0], 256)
         self.shared = nn.Linear(256 * 2 + action_size, 256)
 
-    def forward(
-        self, x: TorchObservation, action: torch.Tensor
-    ) -> torch.Tensor:
+    def forward(self, x: TorchObservation, action: torch.Tensor) -> torch.Tensor:
         h1 = self.fc1(x[0])
         h2 = self.fc2(x[1])
         return self.shared(torch.cat([h1, h2, action], dim=1))
 
 
-class TupleEncoderFactory(d3rlpy.models.EncoderFactory):
+class TupleEncoderFactory(d3rlpy_marin.models.EncoderFactory):
     def create(self, observation_shape: Shape) -> Encoder:
         return TupleEncoder(observation_shape)
 
@@ -64,17 +62,17 @@ def main() -> None:
     parser.add_argument("--gpu", type=int)
     args = parser.parse_args()
 
-    dataset, env = d3rlpy.datasets.get_minari(
+    dataset, env = d3rlpy_marin.datasets.get_minari(
         "antmaze-umaze-v0", tuple_observation=True
     )
 
-    cql = d3rlpy.algos.SACConfig(
+    cql = d3rlpy_marin.algos.SACConfig(
         actor_encoder_factory=TupleEncoderFactory(),
         critic_encoder_factory=TupleEncoderFactory(),
-        observation_scaler=d3rlpy.preprocessing.TupleObservationScaler(
+        observation_scaler=d3rlpy_marin.preprocessing.TupleObservationScaler(
             [
-                d3rlpy.preprocessing.StandardObservationScaler(),
-                d3rlpy.preprocessing.StandardObservationScaler(),
+                d3rlpy_marin.preprocessing.StandardObservationScaler(),
+                d3rlpy_marin.preprocessing.StandardObservationScaler(),
             ]
         ),
     ).create(device=args.gpu)
@@ -83,7 +81,7 @@ def main() -> None:
     cql.fit(
         dataset,
         n_steps=100000,
-        evaluators={"environment": d3rlpy.metrics.EnvironmentEvaluator(env)},
+        evaluators={"environment": d3rlpy_marin.metrics.EnvironmentEvaluator(env)},
         n_steps_per_epoch=1000,
     )
 

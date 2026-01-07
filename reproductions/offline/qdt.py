@@ -5,10 +5,10 @@ from typing import Optional, Union
 import gymnasium as gym
 import numpy as np
 
-import d3rlpy
-from d3rlpy.algos import CQL, IQL
-from d3rlpy.dataset import InfiniteBuffer, ReplayBuffer
-from d3rlpy.types import NDArray
+import d3rlpy_marin
+from d3rlpy_marin.algos import CQL, IQL
+from d3rlpy_marin.dataset import InfiniteBuffer, ReplayBuffer
+from d3rlpy_marin.types import NDArray
 
 
 def main() -> None:
@@ -28,20 +28,20 @@ def main() -> None:
     parser.add_argument("--compile", action="store_true")
     args = parser.parse_args()
 
-    dataset, env = d3rlpy.datasets.get_dataset(args.dataset)
+    dataset, env = d3rlpy_marin.datasets.get_dataset(args.dataset)
 
     # create postfix of log directories
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     log_postfix = f"{env.spec.id}_{args.seed}_{timestamp}"
 
     # fix seed
-    d3rlpy.seed(args.seed)
-    d3rlpy.envs.seed_env(env, args.seed)
+    d3rlpy_marin.seed(args.seed)
+    d3rlpy_marin.envs.seed_env(env, args.seed)
 
     # first fit Q-learning algorithm to the dataset
     if args.model_file is not None:
         # load model and assert type
-        q_algo_loaded = d3rlpy.load_learnable(args.model_file)
+        q_algo_loaded = d3rlpy_marin.load_learnable(args.model_file)
         if not isinstance(q_algo_loaded, (CQL, IQL)):
             raise ValueError("The loaded model is not an instance of CQL or IQL.")
         # cast to the expected type
@@ -131,7 +131,7 @@ def relabel_dataset_rtg(
             relabelled_rewards = np.zeros_like(rewards)
             relabelled_rewards[idx] = rtg
             relabelled_rewards[start:idx] = rewards[start:idx]
-            relabelled_episode = d3rlpy.dataset.components.Episode(
+            relabelled_episode = d3rlpy_marin.dataset.components.Episode(
                 observations=episode.observations,
                 actions=episode.actions,
                 rewards=np.expand_dims(relabelled_rewards, axis=1),
@@ -168,14 +168,14 @@ def fit_cql(
     Return:
         Trained CQL agent.
     """
-    encoder = d3rlpy.models.encoders.VectorEncoderFactory([256, 256, 256])
+    encoder = d3rlpy_marin.models.encoders.VectorEncoderFactory([256, 256, 256])
 
     if "medium-v0" in env.spec.id:
         conservative_weight = 10.0
     else:
         conservative_weight = 5.0
 
-    cql = d3rlpy.algos.CQLConfig(
+    cql = d3rlpy_marin.algos.CQLConfig(
         actor_learning_rate=1e-4,
         critic_learning_rate=3e-4,
         temp_learning_rate=1e-4,
@@ -193,7 +193,7 @@ def fit_cql(
         n_steps=500000,
         n_steps_per_epoch=1000,
         save_interval=50,
-        evaluators={"environment": d3rlpy.metrics.EnvironmentEvaluator(env)},
+        evaluators={"environment": d3rlpy_marin.metrics.EnvironmentEvaluator(env)},
         experiment_name=f"CQL_{log_postfix}",
         with_timestamp=False,
     )
@@ -221,13 +221,15 @@ def fit_iql(
     Return:
         Trained IQL agent.
     """
-    reward_scaler = d3rlpy.preprocessing.ReturnBasedRewardScaler(multiplier=1000.0)
+    reward_scaler = d3rlpy_marin.preprocessing.ReturnBasedRewardScaler(
+        multiplier=1000.0
+    )
 
-    iql = d3rlpy.algos.IQLConfig(
+    iql = d3rlpy_marin.algos.IQLConfig(
         actor_learning_rate=3e-4,
         critic_learning_rate=3e-4,
-        actor_optim_factory=d3rlpy.optimizers.AdamFactory(
-            lr_scheduler_factory=d3rlpy.optimizers.CosineAnnealingLRFactory(
+        actor_optim_factory=d3rlpy_marin.optimizers.AdamFactory(
+            lr_scheduler_factory=d3rlpy_marin.optimizers.CosineAnnealingLRFactory(
                 T_max=500000
             ),
         ),
@@ -245,7 +247,7 @@ def fit_iql(
         n_steps_per_epoch=1000,
         save_interval=10,
         evaluators={
-            "environment": d3rlpy.metrics.EnvironmentEvaluator(env, n_trials=10)
+            "environment": d3rlpy_marin.metrics.EnvironmentEvaluator(env, n_trials=10)
         },
         experiment_name=f"IQL_{log_postfix}",
         with_timestamp=False,
@@ -281,23 +283,23 @@ def fit_dt(
     else:
         raise ValueError("unsupported dataset")
 
-    dt = d3rlpy.algos.DecisionTransformerConfig(
+    dt = d3rlpy_marin.algos.DecisionTransformerConfig(
         batch_size=64,
         learning_rate=1e-4,
-        optim_factory=d3rlpy.optimizers.AdamWFactory(
+        optim_factory=d3rlpy_marin.optimizers.AdamWFactory(
             weight_decay=1e-4,
             clip_grad_norm=0.25,
-            lr_scheduler_factory=d3rlpy.optimizers.WarmupSchedulerFactory(
+            lr_scheduler_factory=d3rlpy_marin.optimizers.WarmupSchedulerFactory(
                 warmup_steps=10000
             ),
         ),
-        encoder_factory=d3rlpy.models.VectorEncoderFactory(
+        encoder_factory=d3rlpy_marin.models.VectorEncoderFactory(
             [128],
             exclude_last_activation=True,
         ),
-        observation_scaler=d3rlpy.preprocessing.StandardObservationScaler(),
-        reward_scaler=d3rlpy.preprocessing.MultiplyRewardScaler(0.001),
-        position_encoding_type=d3rlpy.PositionEncodingType.SIMPLE,
+        observation_scaler=d3rlpy_marin.preprocessing.StandardObservationScaler(),
+        reward_scaler=d3rlpy_marin.preprocessing.MultiplyRewardScaler(0.001),
+        position_encoding_type=d3rlpy_marin.PositionEncodingType.SIMPLE,
         context_size=context_size,
         num_heads=1,
         num_layers=3,

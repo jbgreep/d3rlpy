@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from d3rlpy.models.torch.transformers import (
+from d3rlpy_marin.models.torch.transformers import (
     GPT2,
     MLP,
     Block,
@@ -12,7 +12,7 @@ from d3rlpy.models.torch.transformers import (
     GlobalPositionEncoding,
     SimplePositionEncoding,
 )
-from d3rlpy.types import Shape
+from d3rlpy_marin.types import Shape
 
 from ...testing_utils import create_torch_batched_observations
 from .model_test import DummyEncoder, check_parameter_updates
@@ -154,9 +154,7 @@ def test_global_position_encoding(
 ) -> None:
     model = GlobalPositionEncoding(embed_dim, max_timestep, context_size)
 
-    x = torch.randint(
-        low=0, high=max_timestep, size=(batch_size, 3 * context_size)
-    )
+    x = torch.randint(low=0, high=max_timestep, size=(batch_size, 3 * context_size))
     y = model(x)
 
     # check shape
@@ -239,9 +237,7 @@ def test_continuous_decision_transformer(
         activation=torch.nn.ReLU(),
     )
 
-    x = create_torch_batched_observations(
-        observation_shape, batch_size, context_size
-    )
+    x = create_torch_batched_observations(observation_shape, batch_size, context_size)
     action = torch.rand(batch_size, context_size, action_size)
     rtg = torch.rand(batch_size, context_size, 1)
     timesteps = torch.randint(0, max_timestep, size=(batch_size, context_size))
@@ -292,9 +288,7 @@ def test_discrete_decision_transformer(
         embed_activation=torch.nn.Tanh(),
     )
 
-    x = create_torch_batched_observations(
-        observation_shape, batch_size, context_size
-    )
+    x = create_torch_batched_observations(observation_shape, batch_size, context_size)
     action = torch.randint(0, action_size, size=(batch_size, context_size))
     rtg = torch.rand(batch_size, context_size, 1)
     timesteps = torch.randint(0, max_timestep, size=(batch_size, context_size))
@@ -340,9 +334,7 @@ def test_gato_transformer(
         embed_activation=torch.nn.Tanh(),
     )
 
-    tokens = torch.randint(
-        low=0, high=vocab_size + 1, size=(batch_size, context_size)
-    )
+    tokens = torch.randint(low=0, high=vocab_size + 1, size=(batch_size, context_size))
     observation_masks = torch.randint(
         low=0, high=2, size=(batch_size, context_size, 1), dtype=torch.float32
     )

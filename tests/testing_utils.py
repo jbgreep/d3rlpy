@@ -3,13 +3,13 @@ from typing import Optional, Sequence, cast, overload
 import numpy as np
 import torch
 
-from d3rlpy.dataset import (
+from d3rlpy_marin.dataset import (
     Episode,
     PartialTrajectory,
     Transition,
     is_tuple_shape,
 )
-from d3rlpy.preprocessing import (
+from d3rlpy_marin.preprocessing import (
     ActionScaler,
     MinMaxActionScaler,
     MinMaxObservationScaler,
@@ -18,8 +18,8 @@ from d3rlpy.preprocessing import (
     RewardScaler,
     TupleObservationScaler,
 )
-from d3rlpy.torch_utility import convert_to_torch_recursively
-from d3rlpy.types import (
+from d3rlpy_marin.torch_utility import convert_to_torch_recursively
+from d3rlpy_marin.types import (
     DType,
     Float32NDArray,
     NDArray,
@@ -100,9 +100,7 @@ def create_observations(
             for shape in cast(Sequence[Sequence[int]], observation_shape)
         ]
     else:
-        observations = np.random.random((length, *observation_shape)).astype(
-            dtype
-        )
+        observations = np.random.random((length, *observation_shape)).astype(dtype)
     return observations
 
 
@@ -198,12 +196,10 @@ def create_transition(
     next_observation: Observation
     if isinstance(observation_shape[0], (list, tuple)):
         observation = [
-            np.random.random(shape).astype(np.float32)
-            for shape in observation_shape
+            np.random.random(shape).astype(np.float32) for shape in observation_shape
         ]
         next_observation = [
-            np.random.random(shape).astype(np.float32)
-            for shape in observation_shape
+            np.random.random(shape).astype(np.float32) for shape in observation_shape
         ]
     else:
         observation = np.random.random(observation_shape)  # type: ignore
@@ -262,9 +258,7 @@ def create_partial_trajectory(
 def create_scaler_tuple(
     name: Optional[str],
     observation_shape: Shape,
-) -> tuple[
-    Optional[ObservationScaler], Optional[ActionScaler], Optional[RewardScaler]
-]:
+) -> tuple[Optional[ObservationScaler], Optional[ActionScaler], Optional[RewardScaler]]:
     if name is None:
         return None, None, None
     observation_scaler: ObservationScaler

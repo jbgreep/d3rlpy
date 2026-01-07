@@ -5,11 +5,11 @@ import torch
 from torch import nn
 from torch.optim import SGD, Adam, AdamW, RMSprop
 
-from d3rlpy.optimizers.lr_schedulers import (
+from d3rlpy_marin.optimizers.lr_schedulers import (
     CosineAnnealingLRFactory,
     LRSchedulerFactory,
 )
-from d3rlpy.optimizers.optimizers import (
+from d3rlpy_marin.optimizers.optimizers import (
     AdamFactory,
     AdamWFactory,
     GPTAdamWFactory,
@@ -19,9 +19,7 @@ from d3rlpy.optimizers.optimizers import (
 )
 
 
-@pytest.mark.parametrize(
-    "lr_scheduler_factory", [None, CosineAnnealingLRFactory(100)]
-)
+@pytest.mark.parametrize("lr_scheduler_factory", [None, CosineAnnealingLRFactory(100)])
 @pytest.mark.parametrize("compiled", [False, True])
 @pytest.mark.parametrize("clip_grad_norm", [None, 1e-4])
 def test_optimizer_wrapper(
@@ -31,9 +29,7 @@ def test_optimizer_wrapper(
 ) -> None:
     model = nn.Linear(100, 200)
     optim = SGD(model.parameters(), lr=1)
-    lr_scheduler = (
-        lr_scheduler_factory.create(optim) if lr_scheduler_factory else None
-    )
+    lr_scheduler = lr_scheduler_factory.create(optim) if lr_scheduler_factory else None
     wrapper = OptimizerWrapper(
         params=list(model.parameters()),
         optim=optim,

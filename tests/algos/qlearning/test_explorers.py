@@ -3,18 +3,18 @@ from typing import Optional, Sequence
 import numpy as np
 import pytest
 
-from d3rlpy.algos.qlearning.explorers import (
+from d3rlpy_marin.algos.qlearning.explorers import (
     ConstantEpsilonGreedy,
     LinearDecayEpsilonGreedy,
     NormalNoise,
 )
-from d3rlpy.preprocessing import (
+from d3rlpy_marin.preprocessing import (
     ActionScaler,
     MinMaxActionScaler,
     ObservationScaler,
     RewardScaler,
 )
-from d3rlpy.types import NDArray, Observation
+from d3rlpy_marin.types import NDArray, Observation
 
 
 class DummyAlgo:

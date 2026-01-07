@@ -2,13 +2,13 @@ from typing import Sequence
 
 import pytest
 
-from d3rlpy.models.encoders import VectorEncoderFactory
-from d3rlpy.models.q_functions import (
+from d3rlpy_marin.models.encoders import VectorEncoderFactory
+from d3rlpy_marin.models.q_functions import (
     IQNQFunctionFactory,
     MeanQFunctionFactory,
     QRQFunctionFactory,
 )
-from d3rlpy.models.torch import (
+from d3rlpy_marin.models.torch import (
     ContinuousIQNQFunction,
     ContinuousIQNQFunctionForwarder,
     ContinuousMeanQFunction,
@@ -23,7 +23,7 @@ from d3rlpy.models.torch import (
     DiscreteQRQFunction,
     compute_output_size,
 )
-from d3rlpy.models.torch.encoders import Encoder, EncoderWithAction
+from d3rlpy_marin.models.torch.encoders import Encoder, EncoderWithAction
 
 
 def _create_encoder(observation_shape: Sequence[int]) -> Encoder:
@@ -46,15 +46,11 @@ def test_mean_q_function_factory(
     factory = MeanQFunctionFactory()
     assert factory.get_type() == "mean"
 
-    encoder_with_action = _create_encoder_with_action(
-        observation_shape, action_size
-    )
+    encoder_with_action = _create_encoder_with_action(observation_shape, action_size)
     hidden_size = compute_output_size(
         [observation_shape, (action_size,)], encoder_with_action
     )
-    q_func, forwarder = factory.create_continuous(
-        encoder_with_action, hidden_size
-    )
+    q_func, forwarder = factory.create_continuous(encoder_with_action, hidden_size)
     assert isinstance(q_func, ContinuousMeanQFunction)
     assert isinstance(forwarder, ContinuousMeanQFunctionForwarder)
 
@@ -78,15 +74,11 @@ def test_qr_q_function_factory(
     factory = QRQFunctionFactory()
     assert factory.get_type() == "qr"
 
-    encoder_with_action = _create_encoder_with_action(
-        observation_shape, action_size
-    )
+    encoder_with_action = _create_encoder_with_action(observation_shape, action_size)
     hidden_size = compute_output_size(
         [observation_shape, (action_size,)], encoder_with_action
     )
-    q_func, forwarder = factory.create_continuous(
-        encoder_with_action, hidden_size
-    )
+    q_func, forwarder = factory.create_continuous(encoder_with_action, hidden_size)
     assert isinstance(q_func, ContinuousQRQFunction)
     assert isinstance(forwarder, ContinuousQRQFunctionForwarder)
 
@@ -110,15 +102,11 @@ def test_iqn_q_function_factory(
     factory = IQNQFunctionFactory()
     assert factory.get_type() == "iqn"
 
-    encoder_with_action = _create_encoder_with_action(
-        observation_shape, action_size
-    )
+    encoder_with_action = _create_encoder_with_action(observation_shape, action_size)
     hidden_size = compute_output_size(
         [observation_shape, (action_size,)], encoder_with_action
     )
-    q_func, forwarder = factory.create_continuous(
-        encoder_with_action, hidden_size
-    )
+    q_func, forwarder = factory.create_continuous(encoder_with_action, hidden_size)
     assert isinstance(q_func, ContinuousIQNQFunction)
     assert isinstance(forwarder, ContinuousIQNQFunctionForwarder)
 

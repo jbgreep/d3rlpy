@@ -1,7 +1,7 @@
 import numpy as np
 
-from d3rlpy.tokenizers import FloatTokenizer
-from d3rlpy.types import NDArray
+from d3rlpy_marin.tokenizers import FloatTokenizer
+from d3rlpy_marin.types import NDArray
 
 
 def test_float_tokenizer() -> None:
@@ -18,9 +18,7 @@ def test_float_tokenizer() -> None:
     assert np.all(tokenized_v < 100)
 
     # check token_offset
-    tokenizer = FloatTokenizer(
-        num_bins=100, use_mu_law_encode=False, token_offset=1
-    )
+    tokenizer = FloatTokenizer(num_bins=100, use_mu_law_encode=False, token_offset=1)
     v = np.array([-1, 1])
     tokenized_v = tokenizer(v)
     assert tokenized_v[0] == 1

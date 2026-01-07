@@ -1,22 +1,20 @@
 import pytest
 import torch
 
-from d3rlpy.models.builders import create_continuous_q_function
-from d3rlpy.models.q_functions import (
+from d3rlpy_marin.models.builders import create_continuous_q_function
+from d3rlpy_marin.models.q_functions import (
     MeanQFunctionFactory,
     QFunctionFactory,
     QRQFunctionFactory,
 )
-from d3rlpy.models.torch.q_functions import compute_max_with_n_actions
-from d3rlpy.types import Shape
+from d3rlpy_marin.models.torch.q_functions import compute_max_with_n_actions
+from d3rlpy_marin.types import Shape
 
 from ...testing_utils import create_torch_observations
 from .model_test import DummyEncoderFactory
 
 
-@pytest.mark.parametrize(
-    "observation_shape", [(4, 84, 84), (100,), ((100,), (200,))]
-)
+@pytest.mark.parametrize("observation_shape", [(4, 84, 84), (100,), ((100,), (200,))])
 @pytest.mark.parametrize("action_size", [3])
 @pytest.mark.parametrize(
     "q_func_factory", [MeanQFunctionFactory(), QRQFunctionFactory()]

@@ -3,14 +3,14 @@ from typing import Sequence
 import numpy as np
 import pytest
 
-from d3rlpy.dataset import (
+from d3rlpy_marin.dataset import (
     BasicWriterPreprocess,
     EpisodeBase,
     ExperienceWriter,
     InfiniteBuffer,
     LastFrameWriterPreprocess,
 )
-from d3rlpy.types import Shape
+from d3rlpy_marin.types import Shape
 
 from ..testing_utils import create_episode, create_observation
 
@@ -72,9 +72,7 @@ def test_episode_writer(
     terminated: bool,
     write_at_termination: bool,
 ) -> None:
-    episode: EpisodeBase = create_episode(
-        observation_shape, action_size, length
-    )
+    episode: EpisodeBase = create_episode(observation_shape, action_size, length)
     buffer = InfiniteBuffer()
     writer = ExperienceWriter(
         buffer,
@@ -107,6 +105,4 @@ def test_episode_writer(
     if isinstance(observation_shape[0], tuple):
         assert tuple(episode.observation_signature.shape) == observation_shape
     else:
-        assert (
-            tuple(episode.observation_signature.shape[0]) == observation_shape
-        )
+        assert tuple(episode.observation_signature.shape[0]) == observation_shape

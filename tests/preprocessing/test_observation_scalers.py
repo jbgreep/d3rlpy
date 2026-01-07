@@ -4,19 +4,19 @@ import numpy as np
 import pytest
 import torch
 
-from d3rlpy.dataset import (
+from d3rlpy_marin.dataset import (
     BasicTrajectorySlicer,
     BasicTransitionPicker,
     EpisodeGenerator,
 )
-from d3rlpy.preprocessing import (
+from d3rlpy_marin.preprocessing import (
     MinMaxObservationScaler,
     PixelObservationScaler,
     StandardObservationScaler,
     TupleObservationScaler,
 )
-from d3rlpy.torch_utility import convert_to_torch_recursively
-from d3rlpy.types import Float32NDArray, Shape
+from d3rlpy_marin.torch_utility import convert_to_torch_recursively
+from d3rlpy_marin.types import Float32NDArray, Shape
 
 from ..dummy_env import DummyAtari
 from ..testing_utils import create_observations

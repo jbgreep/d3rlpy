@@ -3,12 +3,12 @@ from typing import Sequence
 import numpy as np
 import pytest
 
-from d3rlpy.dataset import (
+from d3rlpy_marin.dataset import (
     BasicTrajectorySlicer,
     FrameStackTrajectorySlicer,
     FrameStackTransitionPicker,
 )
-from d3rlpy.types import Shape
+from d3rlpy_marin.types import Shape
 
 from ..testing_utils import create_episode
 
@@ -79,9 +79,7 @@ def test_basic_trajectory_slicer(
         assert np.all(traj.actions[:pad_size] == 0.0)
         assert np.all(traj.rewards[pad_size:] == episode.rewards[start:end])
         assert np.all(traj.rewards[:pad_size] == 0.0)
-        assert np.allclose(
-            traj.returns_to_go[pad_size:], ref_returns_to_go[start:end]
-        )
+        assert np.allclose(traj.returns_to_go[pad_size:], ref_returns_to_go[start:end])
         assert np.all(traj.returns_to_go[:pad_size] == 0.0)
         assert np.all(traj.terminals == 0.0)
         assert np.all(traj.timesteps[pad_size:] == np.arange(start, end)) + 1
@@ -164,9 +162,7 @@ def test_frame_stack_trajectory_slicer(
         assert np.all(traj.actions[:pad_size] == 0.0)
         assert np.all(traj.rewards[pad_size:] == episode.rewards[start:end])
         assert np.all(traj.rewards[:pad_size] == 0.0)
-        assert np.allclose(
-            traj.returns_to_go[pad_size:], ref_returns_to_go[start:end]
-        )
+        assert np.allclose(traj.returns_to_go[pad_size:], ref_returns_to_go[start:end])
         assert np.all(traj.returns_to_go[:pad_size] == 0.0)
         assert np.all(traj.terminals == 0.0)
         assert np.all(traj.timesteps[pad_size:] == np.arange(start, end)) + 1

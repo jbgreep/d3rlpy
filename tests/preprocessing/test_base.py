@@ -1,7 +1,10 @@
 import numpy as np
 import torch
 
-from d3rlpy.preprocessing.base import add_leading_dims, add_leading_dims_numpy
+from d3rlpy_marin.preprocessing.base import (
+    add_leading_dims,
+    add_leading_dims_numpy,
+)
 
 
 def test_add_leading_dims() -> None:

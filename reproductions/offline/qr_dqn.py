@@ -1,6 +1,6 @@
 import argparse
 
-import d3rlpy
+import d3rlpy_marin
 
 
 def main() -> None:
@@ -12,31 +12,31 @@ def main() -> None:
     args = parser.parse_args()
 
     # fix seed
-    d3rlpy.seed(args.seed)
+    d3rlpy_marin.seed(args.seed)
 
-    dataset, env = d3rlpy.datasets.get_atari_transitions(
+    dataset, env = d3rlpy_marin.datasets.get_atari_transitions(
         args.game,
         fraction=0.01,
         index=1 if args.game == "asterix" else 0,
         num_stack=4,
     )
 
-    d3rlpy.envs.seed_env(env, args.seed)
+    d3rlpy_marin.envs.seed_env(env, args.seed)
 
-    dqn = d3rlpy.algos.DQNConfig(
+    dqn = d3rlpy_marin.algos.DQNConfig(
         learning_rate=5e-5,
-        optim_factory=d3rlpy.optimizers.AdamFactory(eps=1e-2 / 32),
+        optim_factory=d3rlpy_marin.optimizers.AdamFactory(eps=1e-2 / 32),
         batch_size=32,
-        q_func_factory=d3rlpy.models.q_functions.QRQFunctionFactory(
+        q_func_factory=d3rlpy_marin.models.q_functions.QRQFunctionFactory(
             n_quantiles=200
         ),
-        observation_scaler=d3rlpy.preprocessing.PixelObservationScaler(),
+        observation_scaler=d3rlpy_marin.preprocessing.PixelObservationScaler(),
         target_update_interval=2000,
-        reward_scaler=d3rlpy.preprocessing.ClipRewardScaler(-1.0, 1.0),
+        reward_scaler=d3rlpy_marin.preprocessing.ClipRewardScaler(-1.0, 1.0),
         compile_graph=args.compile,
     ).create(device=args.gpu)
 
-    env_scorer = d3rlpy.metrics.EnvironmentEvaluator(env, epsilon=0.001)
+    env_scorer = d3rlpy_marin.metrics.EnvironmentEvaluator(env, epsilon=0.001)
 
     dqn.fit(
         dataset,

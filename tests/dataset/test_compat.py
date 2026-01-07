@@ -3,7 +3,7 @@ from typing import Sequence
 import numpy as np
 import pytest
 
-from d3rlpy.dataset import MDPDataset, ReplayBuffer
+from d3rlpy_marin.dataset import MDPDataset, ReplayBuffer
 
 from ..testing_utils import create_observation
 

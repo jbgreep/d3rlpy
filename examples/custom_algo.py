@@ -7,8 +7,8 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-import d3rlpy
-from d3rlpy.torch_utility import hard_sync
+import d3rlpy_marin
+from d3rlpy_marin.torch_utility import hard_sync
 
 
 class QFunction(nn.Module):  # type: ignore
@@ -25,18 +25,18 @@ class QFunction(nn.Module):  # type: ignore
 
 
 @dataclasses.dataclass(frozen=True)
-class CustomAlgoModules(d3rlpy.Modules):
+class CustomAlgoModules(d3rlpy_marin.Modules):
     q_func: QFunction
     targ_q_func: QFunction
     optim: torch.optim.Optimizer
 
 
-class CustomAlgoImpl(d3rlpy.algos.QLearningAlgoImplBase):
+class CustomAlgoImpl(d3rlpy_marin.algos.QLearningAlgoImplBase):
     _modules: CustomAlgoModules
 
     def __init__(
         self,
-        observation_shape: d3rlpy.types.Shape,
+        observation_shape: d3rlpy_marin.types.Shape,
         action_size: int,
         modules: CustomAlgoModules,
         target_update_interval: int,
@@ -48,7 +48,7 @@ class CustomAlgoImpl(d3rlpy.algos.QLearningAlgoImplBase):
         self._gamma = gamma
 
     def inner_update(
-        self, batch: d3rlpy.TorchMiniBatch, grad_step: int
+        self, batch: d3rlpy_marin.TorchMiniBatch, grad_step: int
     ) -> dict[str, float]:
         self._modules.optim.zero_grad()
 
@@ -82,16 +82,18 @@ class CustomAlgoImpl(d3rlpy.algos.QLearningAlgoImplBase):
         return {"loss": float(loss.detach().numpy())}
 
     def inner_predict_best_action(
-        self, x: d3rlpy.types.TorchObservation
+        self, x: d3rlpy_marin.types.TorchObservation
     ) -> torch.Tensor:
         q = self._modules.q_func(x)
         return q.argmax(dim=1)
 
-    def inner_sample_action(self, x: d3rlpy.types.TorchObservation) -> torch.Tensor:
+    def inner_sample_action(
+        self, x: d3rlpy_marin.types.TorchObservation
+    ) -> torch.Tensor:
         return self.inner_predict_best_action(x)
 
     def inner_predict_value(
-        self, x: d3rlpy.types.TorchObservation, action: torch.Tensor
+        self, x: d3rlpy_marin.types.TorchObservation, action: torch.Tensor
     ) -> torch.Tensor:
         q = self._modules.q_func(x)
         flat_action = action.reshape(-1)
@@ -99,14 +101,14 @@ class CustomAlgoImpl(d3rlpy.algos.QLearningAlgoImplBase):
 
 
 @dataclasses.dataclass()
-class CustomAlgoConfig(d3rlpy.base.LearnableConfig):
+class CustomAlgoConfig(d3rlpy_marin.base.LearnableConfig):
     batch_size: int = 32
     learning_rate: float = 1e-3
     target_update_interval: int = 100
     gamma: float = 0.99
 
     def create(
-        self, device: d3rlpy.base.DeviceArg = False, enable_ddp: bool = False
+        self, device: d3rlpy_marin.base.DeviceArg = False, enable_ddp: bool = False
     ) -> "CustomAlgo":
         return CustomAlgo(self, device, enable_ddp)
 
@@ -115,9 +117,11 @@ class CustomAlgoConfig(d3rlpy.base.LearnableConfig):
         return "custom"
 
 
-class CustomAlgo(d3rlpy.algos.QLearningAlgoBase[CustomAlgoImpl, CustomAlgoConfig]):
+class CustomAlgo(
+    d3rlpy_marin.algos.QLearningAlgoBase[CustomAlgoImpl, CustomAlgoConfig]
+):
     def inner_create_impl(
-        self, observation_shape: d3rlpy.types.Shape, action_size: int
+        self, observation_shape: d3rlpy_marin.types.Shape, action_size: int
     ) -> None:
         # create Q-functions
         q_func = QFunction(cast(Sequence[int], observation_shape), action_size)
@@ -150,8 +154,8 @@ class CustomAlgo(d3rlpy.algos.QLearningAlgoBase[CustomAlgoImpl, CustomAlgoConfig
             device=self._device,
         )
 
-    def get_action_type(self) -> d3rlpy.ActionSpace:
-        return d3rlpy.ActionSpace.DISCRETE
+    def get_action_type(self) -> d3rlpy_marin.ActionSpace:
+        return d3rlpy_marin.ActionSpace.DISCRETE
 
 
 def main() -> None:
@@ -160,8 +164,8 @@ def main() -> None:
     eval_env = gym.make("CartPole-v1")
 
     # prepare custom algorithm
-    explorer = d3rlpy.algos.ConstantEpsilonGreedy(epsilon=0.3)
-    buffer = d3rlpy.dataset.create_fifo_replay_buffer(limit=1000000, env=env)
+    explorer = d3rlpy_marin.algos.ConstantEpsilonGreedy(epsilon=0.3)
+    buffer = d3rlpy_marin.dataset.create_fifo_replay_buffer(limit=1000000, env=env)
     algo = CustomAlgoConfig().create()
 
     # start training

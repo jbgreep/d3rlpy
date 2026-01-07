@@ -2,13 +2,13 @@ import numpy as np
 import pytest
 import torch
 
-from d3rlpy.models.torch import (
+from d3rlpy_marin.models.torch import (
     ContinuousMeanQFunction,
     ContinuousMeanQFunctionForwarder,
     DiscreteMeanQFunction,
     DiscreteMeanQFunctionForwarder,
 )
-from d3rlpy.types import NDArray, Shape
+from d3rlpy_marin.types import NDArray, Shape
 
 from ....testing_utils import create_torch_observations
 from ..model_test import (
@@ -19,9 +19,7 @@ from ..model_test import (
 )
 
 
-def filter_by_action(
-    value: NDArray, action: NDArray, action_size: int
-) -> NDArray:
+def filter_by_action(value: NDArray, action: NDArray, action_size: int) -> NDArray:
     act_one_hot = np.identity(action_size)[np.reshape(action, (-1,))]
     return (value * act_one_hot).sum(axis=1)  # type: ignore
 
@@ -33,9 +31,7 @@ def test_discrete_mean_q_function(
     observation_shape: Shape, action_size: int, batch_size: int
 ) -> None:
     encoder = DummyEncoder(observation_shape)
-    q_func = DiscreteMeanQFunction(
-        encoder, encoder.get_feature_size(), action_size
-    )
+    q_func = DiscreteMeanQFunction(encoder, encoder.get_feature_size(), action_size)
 
     # check output shape
     x = create_torch_observations(observation_shape, batch_size)
@@ -56,9 +52,7 @@ def test_discrete_mean_q_function_forwarder(
     observation_shape: Shape, action_size: int, batch_size: int, gamma: float
 ) -> None:
     encoder = DummyEncoder(observation_shape)
-    q_func = DiscreteMeanQFunction(
-        encoder, encoder.get_feature_size(), action_size
-    )
+    q_func = DiscreteMeanQFunction(encoder, encoder.get_feature_size(), action_size)
     forwarder = DiscreteMeanQFunctionForwarder(q_func, action_size)
 
     # check output shape
@@ -85,9 +79,7 @@ def test_discrete_mean_q_function_forwarder(
 
     obs_t = create_torch_observations(observation_shape, batch_size)
     act_t = np.random.randint(action_size, size=(batch_size, 1))
-    q_t = filter_by_action(
-        q_func(obs_t).q_value.detach().numpy(), act_t, action_size
-    )
+    q_t = filter_by_action(q_func(obs_t).q_value.detach().numpy(), act_t, action_size)
     ref_loss = ref_huber_loss(q_t.reshape((-1, 1)), target)
 
     act_t = torch.tensor(act_t, dtype=torch.int64)

@@ -4,7 +4,7 @@ import gymnasium as gym
 import numpy as np
 from gymnasium.spaces import Box, Discrete
 
-from d3rlpy.types import NDArray
+from d3rlpy_marin.types import NDArray
 
 
 class DummyAtari(gym.Env[NDArray, int]):

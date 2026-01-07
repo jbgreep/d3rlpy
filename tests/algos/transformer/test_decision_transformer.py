@@ -2,20 +2,18 @@ from typing import Optional
 
 import pytest
 
-from d3rlpy.algos import (
+from d3rlpy_marin.algos import (
     DecisionTransformerConfig,
     DiscreteDecisionTransformerConfig,
 )
-from d3rlpy.types import Shape
+from d3rlpy_marin.types import Shape
 
 from ...models.torch.model_test import DummyEncoderFactory
 from ...testing_utils import create_scaler_tuple
 from .algo_test import algo_tester
 
 
-@pytest.mark.parametrize(
-    "observation_shape", [(100,), (4, 8, 8), ((100,), (200,))]
-)
+@pytest.mark.parametrize("observation_shape", [(100,), (4, 8, 8), ((100,), (200,))])
 @pytest.mark.parametrize("scalers", [None, "min_max"])
 def test_decision_transformer(
     observation_shape: Shape,
@@ -37,9 +35,7 @@ def test_decision_transformer(
     )
 
 
-@pytest.mark.parametrize(
-    "observation_shape", [(100,), (4, 8, 8), ((100,), (200,))]
-)
+@pytest.mark.parametrize("observation_shape", [(100,), (4, 8, 8), ((100,), (200,))])
 @pytest.mark.parametrize("scalers", [None, "min_max"])
 def test_discrete_decision_transformer(
     observation_shape: Shape,

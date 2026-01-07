@@ -1,6 +1,6 @@
 import argparse
 
-import d3rlpy
+import d3rlpy_marin
 
 
 def main() -> None:
@@ -12,9 +12,9 @@ def main() -> None:
     parser.add_argument("--compile", action="store_true")
     args = parser.parse_args()
 
-    d3rlpy.seed(args.seed)
+    d3rlpy_marin.seed(args.seed)
 
-    dataset, env = d3rlpy.datasets.get_atari_transitions(
+    dataset, env = d3rlpy_marin.datasets.get_atari_transitions(
         args.game,
         fraction=0.01,
         index=1 if args.game == "asterix" else 0,
@@ -23,7 +23,7 @@ def main() -> None:
         pre_stack=args.pre_stack,
     )
 
-    d3rlpy.envs.seed_env(env, args.seed)
+    d3rlpy_marin.envs.seed_env(env, args.seed)
 
     if args.game == "pong":
         batch_size = 512
@@ -48,29 +48,29 @@ def main() -> None:
     for episode in dataset.episodes:
         max_timestep = max(max_timestep, episode.transition_count + 1)
 
-    dt = d3rlpy.algos.DiscreteDecisionTransformerConfig(
+    dt = d3rlpy_marin.algos.DiscreteDecisionTransformerConfig(
         batch_size=batch_size,
         context_size=context_size,
         learning_rate=6e-4,
         activation_type="gelu",
         embed_activation_type="tanh",
-        encoder_factory=d3rlpy.models.PixelEncoderFactory(
+        encoder_factory=d3rlpy_marin.models.PixelEncoderFactory(
             feature_size=128, exclude_last_activation=True
         ),  # Nature DQN
         num_heads=8,
         num_layers=6,
         attn_dropout=0.1,
         embed_dropout=0.1,
-        optim_factory=d3rlpy.optimizers.GPTAdamWFactory(
+        optim_factory=d3rlpy_marin.optimizers.GPTAdamWFactory(
             betas=(0.9, 0.95),
             weight_decay=0.1,
             clip_grad_norm=1.0,
         ),
         warmup_tokens=512 * 20,
         final_tokens=2 * 500000 * context_size * 3,
-        observation_scaler=d3rlpy.preprocessing.PixelObservationScaler(),
+        observation_scaler=d3rlpy_marin.preprocessing.PixelObservationScaler(),
         max_timestep=max_timestep,
-        position_encoding_type=d3rlpy.PositionEncodingType.GLOBAL,
+        position_encoding_type=d3rlpy_marin.PositionEncodingType.GLOBAL,
         compile_graph=args.compile,
     ).create(device=args.gpu)
 
@@ -82,7 +82,7 @@ def main() -> None:
         n_steps_per_epoch=n_steps_per_epoch,
         eval_env=env,
         eval_target_return=target_return,
-        eval_action_sampler=d3rlpy.algos.SoftmaxTransformerActionSampler(
+        eval_action_sampler=d3rlpy_marin.algos.SoftmaxTransformerActionSampler(
             temperature=1.0,
         ),
         experiment_name=f"DiscreteDT_{args.game}_{args.seed}",

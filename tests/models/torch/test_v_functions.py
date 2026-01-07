@@ -2,11 +2,11 @@ import pytest
 import torch
 import torch.nn.functional as F
 
-from d3rlpy.models.torch.v_functions import (
+from d3rlpy_marin.models.torch.v_functions import (
     ValueFunction,
     compute_v_function_error,
 )
-from d3rlpy.types import Shape
+from d3rlpy_marin.types import Shape
 
 from ...testing_utils import create_torch_observations
 from .model_test import DummyEncoder, check_parameter_updates

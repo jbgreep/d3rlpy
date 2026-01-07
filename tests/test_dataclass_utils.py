@@ -2,7 +2,7 @@ import dataclasses
 
 import torch
 
-from d3rlpy.dataclass_utils import asdict_as_float, asdict_without_copy
+from d3rlpy_marin.dataclass_utils import asdict_as_float, asdict_without_copy
 
 
 @dataclasses.dataclass(frozen=True)

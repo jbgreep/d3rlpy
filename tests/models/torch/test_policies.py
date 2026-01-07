@@ -1,11 +1,11 @@
 import pytest
 import torch
 
-from d3rlpy.models.torch.distributions import (
+from d3rlpy_marin.models.torch.distributions import (
     GaussianDistribution,
     SquashedGaussianDistribution,
 )
-from d3rlpy.models.torch.policies import (
+from d3rlpy_marin.models.torch.policies import (
     ActionOutput,
     CategoricalPolicy,
     DeterministicPolicy,
@@ -14,7 +14,7 @@ from d3rlpy.models.torch.policies import (
     build_gaussian_distribution,
     build_squashed_gaussian_distribution,
 )
-from d3rlpy.types import Shape
+from d3rlpy_marin.types import Shape
 
 from ...testing_utils import create_torch_observations
 from .model_test import (

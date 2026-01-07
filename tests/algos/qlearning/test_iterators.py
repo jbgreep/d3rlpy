@@ -1,11 +1,11 @@
 import gymnasium as gym
 import pytest
 
-from d3rlpy.algos.qlearning import DQNConfig, SACConfig
-from d3rlpy.algos.qlearning.explorers import LinearDecayEpsilonGreedy
-from d3rlpy.dataset import InfiniteBuffer, ReplayBuffer
-from d3rlpy.envs import ChannelFirst
-from d3rlpy.logging import NoopAdapterFactory
+from d3rlpy_marin.algos.qlearning import DQNConfig, SACConfig
+from d3rlpy_marin.algos.qlearning.explorers import LinearDecayEpsilonGreedy
+from d3rlpy_marin.dataset import InfiniteBuffer, ReplayBuffer
+from d3rlpy_marin.envs import ChannelFirst
+from d3rlpy_marin.logging import NoopAdapterFactory
 
 from ...dummy_env import DummyAtari
 

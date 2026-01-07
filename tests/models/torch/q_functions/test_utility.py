@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 import torch
 
-from d3rlpy.models.torch.q_functions.utility import (
+from d3rlpy_marin.models.torch.q_functions.utility import (
     compute_quantile_huber_loss,
     pick_quantile_value_by_action,
     pick_value_by_action,

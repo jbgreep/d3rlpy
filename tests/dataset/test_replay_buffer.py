@@ -4,8 +4,8 @@ from typing import Optional
 import numpy as np
 import pytest
 
-from d3rlpy.constants import ActionSpace
-from d3rlpy.dataset import (
+from d3rlpy_marin.constants import ActionSpace
+from d3rlpy_marin.dataset import (
     BasicTrajectorySlicer,
     BasicTransitionPicker,
     FIFOBuffer,
@@ -15,7 +15,7 @@ from d3rlpy.dataset import (
     create_fifo_replay_buffer,
     create_infinite_replay_buffer,
 )
-from d3rlpy.types import Shape
+from d3rlpy_marin.types import Shape
 
 from ..testing_utils import create_episode, create_observation
 
@@ -99,9 +99,7 @@ def test_replay_buffer_sample(
     assert len(batch) == batch_size
 
     # check trajectory sampling
-    traj_batch = replay_buffer.sample_trajectory_batch(
-        batch_size, partial_length
-    )
+    traj_batch = replay_buffer.sample_trajectory_batch(batch_size, partial_length)
     assert len(traj_batch) == batch_size
 
 
@@ -160,9 +158,7 @@ def test_mixed_replay_buffer(
     assert len(batch) == batch_size
 
     # check trajectory sampling
-    traj_batch = mixed_replay_buffer.sample_trajectory_batch(
-        batch_size, partial_length
-    )
+    traj_batch = mixed_replay_buffer.sample_trajectory_batch(batch_size, partial_length)
     assert len(traj_batch) == batch_size
 
     # check add episode

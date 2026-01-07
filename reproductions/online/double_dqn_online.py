@@ -2,7 +2,7 @@ import argparse
 
 import gymnasium as gym
 
-import d3rlpy
+import d3rlpy_marin
 
 
 def main() -> None:
@@ -14,34 +14,34 @@ def main() -> None:
     args = parser.parse_args()
 
     # get wrapped atari environment
-    env = d3rlpy.envs.Atari(gym.make(args.env), num_stack=4)
-    eval_env = d3rlpy.envs.Atari(gym.make(args.env), num_stack=4, is_eval=True)
+    env = d3rlpy_marin.envs.Atari(gym.make(args.env), num_stack=4)
+    eval_env = d3rlpy_marin.envs.Atari(gym.make(args.env), num_stack=4, is_eval=True)
 
     # fix seed
-    d3rlpy.seed(args.seed)
-    d3rlpy.envs.seed_env(env, args.seed)
-    d3rlpy.envs.seed_env(eval_env, args.seed)
+    d3rlpy_marin.seed(args.seed)
+    d3rlpy_marin.envs.seed_env(env, args.seed)
+    d3rlpy_marin.envs.seed_env(eval_env, args.seed)
 
     # setup algorithm
-    dqn = d3rlpy.algos.DoubleDQNConfig(
+    dqn = d3rlpy_marin.algos.DoubleDQNConfig(
         batch_size=32,
         learning_rate=2.5e-4,
-        optim_factory=d3rlpy.optimizers.RMSpropFactory(),
+        optim_factory=d3rlpy_marin.optimizers.RMSpropFactory(),
         target_update_interval=10000,
-        observation_scaler=d3rlpy.preprocessing.PixelObservationScaler(),
+        observation_scaler=d3rlpy_marin.preprocessing.PixelObservationScaler(),
         compile_graph=args.compile,
     ).create(device=args.gpu)
 
     # replay buffer for experience replay
-    buffer = d3rlpy.dataset.create_fifo_replay_buffer(
+    buffer = d3rlpy_marin.dataset.create_fifo_replay_buffer(
         limit=1000000,
-        transition_picker=d3rlpy.dataset.FrameStackTransitionPicker(n_frames=4),
-        writer_preprocessor=d3rlpy.dataset.LastFrameWriterPreprocess(),
+        transition_picker=d3rlpy_marin.dataset.FrameStackTransitionPicker(n_frames=4),
+        writer_preprocessor=d3rlpy_marin.dataset.LastFrameWriterPreprocess(),
         env=env,
     )
 
     # epilon-greedy explorer
-    explorer = d3rlpy.algos.LinearDecayEpsilonGreedy(
+    explorer = d3rlpy_marin.algos.LinearDecayEpsilonGreedy(
         start_epsilon=1.0, end_epsilon=0.1, duration=1000000
     )
 

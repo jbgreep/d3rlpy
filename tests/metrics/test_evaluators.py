@@ -3,15 +3,15 @@ from typing import Callable, Optional, Sequence
 import numpy as np
 import pytest
 
-from d3rlpy.algos import DQNConfig, SACConfig
-from d3rlpy.dataset import (
+from d3rlpy_marin.algos import DQNConfig, SACConfig
+from d3rlpy_marin.dataset import (
     BasicTransitionPicker,
     Episode,
     InfiniteBuffer,
     ReplayBuffer,
     TransitionMiniBatch,
 )
-from d3rlpy.metrics.evaluators import (
+from d3rlpy_marin.metrics.evaluators import (
     AverageValueEstimationEvaluator,
     CompareContinuousActionDiffEvaluator,
     CompareDiscreteActionMatchEvaluator,
@@ -22,13 +22,13 @@ from d3rlpy.metrics.evaluators import (
     SoftOPCEvaluator,
     TDErrorEvaluator,
 )
-from d3rlpy.preprocessing import (
+from d3rlpy_marin.preprocessing import (
     ActionScaler,
     ClipRewardScaler,
     ObservationScaler,
     RewardScaler,
 )
-from d3rlpy.types import Float32NDArray, NDArray, Observation
+from d3rlpy_marin.types import Float32NDArray, NDArray, Observation
 
 from ..testing_utils import create_episode
 
@@ -36,8 +36,7 @@ from ..testing_utils import create_episode
 def _convert_episode_to_batch(episode: Episode) -> TransitionMiniBatch:
     transition_picker = BasicTransitionPicker()
     transitions = [
-        transition_picker(episode, index)
-        for index in range(episode.transition_count)
+        transition_picker(episode, index) for index in range(episode.transition_count)
     ]
     return TransitionMiniBatch.from_transitions(transitions)
 
@@ -112,9 +111,7 @@ def ref_td_error_score(
 @pytest.mark.parametrize("n_episodes", [100])
 @pytest.mark.parametrize("episode_length", [10])
 @pytest.mark.parametrize("gamma", [0.99])
-@pytest.mark.parametrize(
-    "reward_scaler", [None, ClipRewardScaler(low=0.2, high=0.5)]
-)
+@pytest.mark.parametrize("reward_scaler", [None, ClipRewardScaler(low=0.2, high=0.5)])
 def test_td_error_scorer(
     observation_shape: Sequence[int],
     action_size: int,
@@ -256,9 +253,7 @@ def test_discounted_sum_of_advantage_scorer(
         )
         ref_sums += ref_sum
 
-    score = DiscountedSumOfAdvantageEvaluator()(
-        algo, _create_replay_buffer(episodes)
-    )
+    score = DiscountedSumOfAdvantageEvaluator()(algo, _create_replay_buffer(episodes))
     assert np.allclose(score, np.mean(ref_sums))
 
 
@@ -329,9 +324,7 @@ def test_average_value_estimation_scorer(
         values = algo.predict_value(batch.observations, policy_actions)
         total_values += values.tolist()
 
-    score = AverageValueEstimationEvaluator()(
-        algo, _create_replay_buffer(episodes)
-    )
+    score = AverageValueEstimationEvaluator()(algo, _create_replay_buffer(episodes))
     assert np.allclose(score, np.mean(total_values))
 
 
@@ -552,9 +545,7 @@ def test_continuous_action_diff_scorer(
         policy_actions = algo.predict(batch.observations)
         diff = ((batch.actions - policy_actions) ** 2).sum(axis=1).tolist()
         total_diffs += diff
-    score = ContinuousActionDiffEvaluator()(
-        algo, _create_replay_buffer(episodes)
-    )
+    score = ContinuousActionDiffEvaluator()(algo, _create_replay_buffer(episodes))
     assert np.allclose(score, np.mean(total_diffs))
 
 
@@ -612,9 +603,7 @@ def test_discrete_action_match_scorer(
         policy_actions = algo.predict(batch.observations)
         match = (batch.actions.reshape(-1) == policy_actions).tolist()
         total_matches += match
-    score = DiscreteActionMatchEvaluator()(
-        algo, _create_replay_buffer(episodes)
-    )
+    score = DiscreteActionMatchEvaluator()(algo, _create_replay_buffer(episodes))
     assert np.allclose(score, np.mean(total_matches))
 
 

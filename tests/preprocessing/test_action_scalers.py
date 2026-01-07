@@ -5,13 +5,13 @@ import numpy as np
 import pytest
 import torch
 
-from d3rlpy.dataset import (
+from d3rlpy_marin.dataset import (
     BasicTrajectorySlicer,
     BasicTransitionPicker,
     EpisodeGenerator,
 )
-from d3rlpy.preprocessing import MinMaxActionScaler
-from d3rlpy.types import Float32NDArray
+from d3rlpy_marin.preprocessing import MinMaxActionScaler
+from d3rlpy_marin.types import Float32NDArray
 
 
 @pytest.mark.parametrize("action_size", [10])

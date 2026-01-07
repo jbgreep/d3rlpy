@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from d3rlpy.models.torch.imitators import (
+from d3rlpy_marin.models.torch.imitators import (
     VAEDecoder,
     VAEEncoder,
     compute_deterministic_imitation_loss,
@@ -11,12 +11,12 @@ from d3rlpy.models.torch.imitators import (
     forward_vae_sample,
     forward_vae_sample_n,
 )
-from d3rlpy.models.torch.policies import (
+from d3rlpy_marin.models.torch.policies import (
     CategoricalPolicy,
     DeterministicPolicy,
     NormalPolicy,
 )
-from d3rlpy.types import Shape
+from d3rlpy_marin.types import Shape
 
 from ...testing_utils import create_torch_observations
 from .model_test import (

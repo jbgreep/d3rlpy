@@ -4,7 +4,7 @@ from typing import Optional, Sequence
 import pytest
 import torch
 
-from d3rlpy.models.torch.encoders import (
+from d3rlpy_marin.models.torch.encoders import (
     PixelEncoder,
     PixelEncoderWithAction,
     SimBaEncoder,

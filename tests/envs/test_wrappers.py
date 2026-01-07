@@ -2,8 +2,8 @@ import gymnasium as gym
 import numpy as np
 import pytest
 
-from d3rlpy.algos import DQNConfig
-from d3rlpy.envs.wrappers import Atari, ChannelFirst, FrameStack
+from d3rlpy_marin.algos import DQNConfig
+from d3rlpy_marin.envs.wrappers import Atari, ChannelFirst, FrameStack
 
 from ..dummy_env import DummyAtari
 

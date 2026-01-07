@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from d3rlpy.algos import (
+from d3rlpy_marin.algos import (
     GreedyTransformerActionSampler,
     IdentityTransformerActionSampler,
     SoftmaxTransformerActionSampler,

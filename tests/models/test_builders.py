@@ -6,8 +6,8 @@ import numpy as np
 import pytest
 import torch
 
-from d3rlpy.constants import PositionEncodingType
-from d3rlpy.models.builders import (
+from d3rlpy_marin.constants import PositionEncodingType
+from d3rlpy_marin.models.builders import (
     create_categorical_policy,
     create_continuous_decision_transformer,
     create_continuous_q_function,
@@ -21,25 +21,25 @@ from d3rlpy.models.builders import (
     create_vae_encoder,
     create_value_function,
 )
-from d3rlpy.models.encoders import DefaultEncoderFactory, EncoderFactory
-from d3rlpy.models.q_functions import MeanQFunctionFactory
-from d3rlpy.models.torch import (
+from d3rlpy_marin.models.encoders import DefaultEncoderFactory, EncoderFactory
+from d3rlpy_marin.models.q_functions import MeanQFunctionFactory
+from d3rlpy_marin.models.torch import (
     ContinuousEnsembleQFunctionForwarder,
     DiscreteEnsembleQFunctionForwarder,
     get_parameter,
 )
-from d3rlpy.models.torch.imitators import VAEDecoder, VAEEncoder
-from d3rlpy.models.torch.policies import (
+from d3rlpy_marin.models.torch.imitators import VAEDecoder, VAEEncoder
+from d3rlpy_marin.models.torch.policies import (
     CategoricalPolicy,
     DeterministicPolicy,
     DeterministicResidualPolicy,
     NormalPolicy,
 )
-from d3rlpy.models.torch.transformers import (
+from d3rlpy_marin.models.torch.transformers import (
     ContinuousDecisionTransformer,
     DiscreteDecisionTransformer,
 )
-from d3rlpy.models.torch.v_functions import ValueFunction
+from d3rlpy_marin.models.torch.v_functions import ValueFunction
 
 
 @pytest.mark.parametrize("observation_shape", [(4, 84, 84), (100,)])

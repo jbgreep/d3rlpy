@@ -3,8 +3,13 @@ from typing import Sequence
 import numpy as np
 import pytest
 
-from d3rlpy.dataset import Episode, PartialTrajectory, Signature, Transition
-from d3rlpy.types import DType
+from d3rlpy_marin.dataset import (
+    Episode,
+    PartialTrajectory,
+    Signature,
+    Transition,
+)
+from d3rlpy_marin.types import DType
 
 
 @pytest.mark.parametrize("shape", [(100,)])

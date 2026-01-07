@@ -3,7 +3,7 @@ from typing import Sequence
 import numpy as np
 import pytest
 
-from d3rlpy.algos.qlearning.random_policy import (
+from d3rlpy_marin.algos.qlearning.random_policy import (
     DiscreteRandomPolicyConfig,
     RandomPolicyConfig,
 )

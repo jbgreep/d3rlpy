@@ -1,4 +1,4 @@
-from d3rlpy.itertools import first_flag, last_flag
+from d3rlpy_marin.itertools import first_flag, last_flag
 
 
 def test_last_flag() -> None:

@@ -2,22 +2,18 @@ from typing import Optional
 
 import pytest
 
-from d3rlpy.algos.qlearning.bc import BCConfig, DiscreteBCConfig
-from d3rlpy.types import Shape
+from d3rlpy_marin.algos.qlearning.bc import BCConfig, DiscreteBCConfig
+from d3rlpy_marin.types import Shape
 
 from ...models.torch.model_test import DummyEncoderFactory
 from ...testing_utils import create_scaler_tuple
 from .algo_test import algo_tester
 
 
-@pytest.mark.parametrize(
-    "observation_shape", [(100,), (4, 32, 32), ((100,), (200,))]
-)
+@pytest.mark.parametrize("observation_shape", [(100,), (4, 32, 32), ((100,), (200,))])
 @pytest.mark.parametrize("policy_type", ["deterministic", "stochastic"])
 @pytest.mark.parametrize("scalers", [None, "min_max"])
-def test_bc(
-    observation_shape: Shape, policy_type: str, scalers: Optional[str]
-) -> None:
+def test_bc(observation_shape: Shape, policy_type: str, scalers: Optional[str]) -> None:
     observation_scaler, action_scaler, _ = create_scaler_tuple(
         scalers, observation_shape
     )
@@ -39,9 +35,7 @@ def test_bc(
     )
 
 
-@pytest.mark.parametrize(
-    "observation_shape", [(100,), (4, 32, 32), ((100,), (200,))]
-)
+@pytest.mark.parametrize("observation_shape", [(100,), (4, 32, 32), ((100,), (200,))])
 @pytest.mark.parametrize("scaler", [None, "min_max"])
 def test_discrete_bc(observation_shape: Shape, scaler: Optional[str]) -> None:
     observation_scaler, _, _ = create_scaler_tuple(scaler, observation_shape)

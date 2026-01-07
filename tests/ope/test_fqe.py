@@ -2,23 +2,21 @@ from typing import Optional
 
 import pytest
 
-from d3rlpy.algos.qlearning import DDPGConfig, DQNConfig
-from d3rlpy.models import (
+from d3rlpy_marin.algos.qlearning import DDPGConfig, DQNConfig
+from d3rlpy_marin.models import (
     MeanQFunctionFactory,
     QFunctionFactory,
     QRQFunctionFactory,
 )
-from d3rlpy.ope.fqe import FQE, DiscreteFQE, FQEConfig
-from d3rlpy.types import Shape
+from d3rlpy_marin.ope.fqe import FQE, DiscreteFQE, FQEConfig
+from d3rlpy_marin.types import Shape
 from tests.algos.qlearning.algo_test import algo_tester
 
 from ..models.torch.model_test import DummyEncoderFactory
 from ..testing_utils import create_scaler_tuple
 
 
-@pytest.mark.parametrize(
-    "observation_shape", [(100,), (4, 84, 84), ((100,), (200,))]
-)
+@pytest.mark.parametrize("observation_shape", [(100,), (4, 84, 84), ((100,), (200,))])
 @pytest.mark.parametrize(
     "q_func_factory", [MeanQFunctionFactory(), QRQFunctionFactory()]
 )
@@ -55,9 +53,7 @@ def test_fqe(
     )
 
 
-@pytest.mark.parametrize(
-    "observation_shape", [(100,), (4, 84, 84), ((100,), (200,))]
-)
+@pytest.mark.parametrize("observation_shape", [(100,), (4, 84, 84), ((100,), (200,))])
 @pytest.mark.parametrize(
     "q_func_factory", [MeanQFunctionFactory(), QRQFunctionFactory()]
 )

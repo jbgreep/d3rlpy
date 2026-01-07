@@ -6,19 +6,19 @@ import numpy as np
 import onnxruntime as ort
 import torch
 
-from d3rlpy.algos import QLearningAlgoBase, QLearningAlgoImplBase
-from d3rlpy.base import LearnableConfig
-from d3rlpy.constants import ActionSpace
-from d3rlpy.dataset import (
+from d3rlpy_marin.algos import QLearningAlgoBase, QLearningAlgoImplBase
+from d3rlpy_marin.base import LearnableConfig
+from d3rlpy_marin.constants import ActionSpace
+from d3rlpy_marin.dataset import (
     EpisodeGenerator,
     Transition,
     TransitionMiniBatch,
     create_infinite_replay_buffer,
     is_tuple_shape,
 )
-from d3rlpy.logging import NoopAdapterFactory
-from d3rlpy.torch_utility import convert_to_numpy_recursively
-from d3rlpy.types import Float32NDArray, NDArray, Shape
+from d3rlpy_marin.logging import NoopAdapterFactory
+from d3rlpy_marin.torch_utility import convert_to_numpy_recursively
+from d3rlpy_marin.types import Float32NDArray, NDArray, Shape
 
 from ...base_test import from_json_tester, load_learnable_tester
 from ...testing_utils import (
@@ -59,9 +59,7 @@ def algo_tester(
         test_policy_optim_copy=test_policy_optim_copy,
         test_q_function_optim_copy=test_q_function_optim_copy,
     )
-    save_policy_tester(
-        algo, deterministic_best_action, observation_shape, action_size
-    )
+    save_policy_tester(algo, deterministic_best_action, observation_shape, action_size)
     if test_predict_value:
         predict_value_tester(algo, observation_shape, action_size)
     if test_policy_copy:
@@ -279,9 +277,7 @@ def update_tester(
         observation = create_observation(observation_shape)
         next_observation = create_observation(observation_shape)
         reward: Float32NDArray = np.random.random((1,)).astype(np.float32)
-        rewards_to_go: Float32NDArray = np.random.random((10, 1)).astype(
-            np.float32
-        )
+        rewards_to_go: Float32NDArray = np.random.random((10, 1)).astype(np.float32)
         terminal = np.random.randint(2)
         if algo.get_action_type() == ActionSpace.DISCRETE:
             action = np.random.randint(action_size, size=(1,))

@@ -5,10 +5,10 @@ import numpy as np
 import torch
 from torch.optim import SGD
 
-from d3rlpy.models import EncoderFactory, register_encoder_factory
-from d3rlpy.models.torch import ActionOutput, QFunctionOutput
-from d3rlpy.models.torch.encoders import Encoder, EncoderWithAction
-from d3rlpy.types import Float32NDArray, NDArray, Shape, TorchObservation
+from d3rlpy_marin.models import EncoderFactory, register_encoder_factory
+from d3rlpy_marin.models.torch import ActionOutput, QFunctionOutput
+from d3rlpy_marin.models.torch.encoders import Encoder, EncoderWithAction
+from d3rlpy_marin.types import Float32NDArray, NDArray, Shape, TorchObservation
 
 
 def check_parameter_updates(
@@ -99,9 +99,7 @@ class DummyEncoderWithAction(EncoderWithAction):
             torch.rand(1, self.get_feature_size())
         )
 
-    def forward(
-        self, x: TorchObservation, action: torch.Tensor
-    ) -> torch.Tensor:
+    def forward(self, x: TorchObservation, action: torch.Tensor) -> torch.Tensor:
         if isinstance(x, torch.Tensor):
             y = x.view(x.shape[0], -1)
         else:
@@ -113,9 +111,7 @@ class DummyEncoderWithAction(EncoderWithAction):
         if isinstance(self.input_shape[0], int):
             feature_size = int(np.cumprod(self.input_shape)[-1])
         else:
-            feature_size = sum(
-                [np.cumprod(shape)[-1] for shape in self.input_shape]
-            )
+            feature_size = sum([np.cumprod(shape)[-1] for shape in self.input_shape])
         return feature_size + self._action_size
 
 

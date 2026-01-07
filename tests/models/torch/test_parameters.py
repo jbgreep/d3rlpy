@@ -3,7 +3,7 @@ from typing import Sequence
 import pytest
 import torch
 
-from d3rlpy.models.torch.parameters import Parameter, get_parameter
+from d3rlpy_marin.models.torch.parameters import Parameter, get_parameter
 
 
 @pytest.mark.parametrize("shape", [(100,)])

@@ -2,16 +2,16 @@
 import io
 import os
 
-from d3rlpy.base import (
+from d3rlpy_marin.base import (
     ImplBase,
     LearnableBase,
     LearnableConfig,
     load_learnable,
     save_config,
 )
-from d3rlpy.logging import D3RLPyLogger, FileAdapterFactory
-from d3rlpy.logging.file_adapter import FileAdapter
-from d3rlpy.types import Shape
+from d3rlpy_marin.logging import D3RLPyLogger, FileAdapterFactory
+from d3rlpy_marin.logging.file_adapter import FileAdapter
+from d3rlpy_marin.types import Shape
 
 
 def _check_reconst_algo(
@@ -35,9 +35,7 @@ def _check_reconst_algo(
     if algo.observation_scaler is None:
         assert new_algo.observation_scaler is None
     else:
-        assert type(algo.observation_scaler) is type(
-            new_algo.observation_scaler
-        )
+        assert type(algo.observation_scaler) is type(new_algo.observation_scaler)
 
     # check action scaler
     if algo.action_scaler is None:

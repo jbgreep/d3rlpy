@@ -1,6 +1,6 @@
 import argparse
 
-import d3rlpy
+import d3rlpy_marin
 
 
 def main() -> None:
@@ -12,27 +12,27 @@ def main() -> None:
     args = parser.parse_args()
 
     # fix seed
-    d3rlpy.seed(args.seed)
+    d3rlpy_marin.seed(args.seed)
 
-    dataset, env = d3rlpy.datasets.get_atari_transitions(
+    dataset, env = d3rlpy_marin.datasets.get_atari_transitions(
         args.game,
         fraction=0.01,
         index=1 if args.game == "asterix" else 0,
         num_stack=4,
     )
 
-    d3rlpy.envs.seed_env(env, args.seed)
+    d3rlpy_marin.envs.seed_env(env, args.seed)
 
-    nfq = d3rlpy.algos.NFQConfig(
+    nfq = d3rlpy_marin.algos.NFQConfig(
         learning_rate=5e-5,
-        optim_factory=d3rlpy.optimizers.AdamFactory(),
+        optim_factory=d3rlpy_marin.optimizers.AdamFactory(),
         batch_size=32,
-        observation_scaler=d3rlpy.preprocessing.PixelObservationScaler(),
-        reward_scaler=d3rlpy.preprocessing.ClipRewardScaler(-1.0, 1.0),
+        observation_scaler=d3rlpy_marin.preprocessing.PixelObservationScaler(),
+        reward_scaler=d3rlpy_marin.preprocessing.ClipRewardScaler(-1.0, 1.0),
         compile_graph=args.compile,
     ).create(device=args.gpu)
 
-    env_scorer = d3rlpy.metrics.EnvironmentEvaluator(env, epsilon=0.001)
+    env_scorer = d3rlpy_marin.metrics.EnvironmentEvaluator(env, epsilon=0.001)
 
     nfq.fit(
         dataset,

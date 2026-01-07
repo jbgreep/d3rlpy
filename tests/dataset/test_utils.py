@@ -4,8 +4,8 @@ import gymnasium as gym
 import numpy as np
 import pytest
 
-from d3rlpy.constants import ActionSpace
-from d3rlpy.dataset import (
+from d3rlpy_marin.constants import ActionSpace
+from d3rlpy_marin.dataset import (
     batch_pad_array,
     batch_pad_observations,
     cast_recursively,
@@ -24,7 +24,7 @@ from d3rlpy.dataset import (
     stack_observations,
     stack_recent_observations,
 )
-from d3rlpy.types import DType, Shape
+from d3rlpy_marin.types import DType, Shape
 
 from ..testing_utils import create_observation, create_observations
 

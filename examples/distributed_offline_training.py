@@ -1,4 +1,4 @@
-import d3rlpy
+import d3rlpy_marin
 
 # This script needs to be launched by using torchrun command.
 # $ torchrun \
@@ -13,7 +13,7 @@ import d3rlpy
 def main() -> None:
     # GPU version:
     # rank = d3rlpy.distributed.init_process_group("nccl")
-    rank = d3rlpy.distributed.init_process_group("gloo")
+    rank = d3rlpy_marin.distributed.init_process_group("gloo")
     print(f"Start running on rank={rank}.")
 
     # GPU version:
@@ -21,24 +21,24 @@ def main() -> None:
     device = "cpu:0"
 
     # setup algorithm
-    cql = d3rlpy.algos.CQLConfig(
+    cql = d3rlpy_marin.algos.CQLConfig(
         actor_learning_rate=1e-3,
         critic_learning_rate=1e-3,
         alpha_learning_rate=1e-3,
     ).create(device=device, enable_ddp=True)
 
     # prepare dataset
-    dataset, env = d3rlpy.datasets.get_pendulum()
+    dataset, env = d3rlpy_marin.datasets.get_pendulum()
 
     # disable logging on rank != 0 workers
-    logger_adapter: d3rlpy.logging.LoggerAdapterFactory
-    evaluators: dict[str, d3rlpy.metrics.EvaluatorProtocol]
+    logger_adapter: d3rlpy_marin.logging.LoggerAdapterFactory
+    evaluators: dict[str, d3rlpy_marin.metrics.EvaluatorProtocol]
     if rank == 0:
-        evaluators = {"environment": d3rlpy.metrics.EnvironmentEvaluator(env)}
-        logger_adapter = d3rlpy.logging.FileAdapterFactory()
+        evaluators = {"environment": d3rlpy_marin.metrics.EnvironmentEvaluator(env)}
+        logger_adapter = d3rlpy_marin.logging.FileAdapterFactory()
     else:
         evaluators = {}
-        logger_adapter = d3rlpy.logging.NoopAdapterFactory()
+        logger_adapter = d3rlpy_marin.logging.NoopAdapterFactory()
 
     # start training
     cql.fit(
@@ -50,7 +50,7 @@ def main() -> None:
         show_progress=rank == 0,
     )
 
-    d3rlpy.distributed.destroy_process_group()
+    d3rlpy_marin.distributed.destroy_process_group()
 
 
 if __name__ == "__main__":

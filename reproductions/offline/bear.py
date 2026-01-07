@@ -1,6 +1,6 @@
 import argparse
 
-import d3rlpy
+import d3rlpy_marin
 
 
 def main() -> None:
@@ -11,20 +11,20 @@ def main() -> None:
     parser.add_argument("--compile", action="store_true")
     args = parser.parse_args()
 
-    dataset, env = d3rlpy.datasets.get_dataset(args.dataset)
+    dataset, env = d3rlpy_marin.datasets.get_dataset(args.dataset)
 
     # fix seed
-    d3rlpy.seed(args.seed)
-    d3rlpy.envs.seed_env(env, args.seed)
+    d3rlpy_marin.seed(args.seed)
+    d3rlpy_marin.envs.seed_env(env, args.seed)
 
-    vae_encoder = d3rlpy.models.encoders.VectorEncoderFactory([750, 750])
+    vae_encoder = d3rlpy_marin.models.encoders.VectorEncoderFactory([750, 750])
 
     if "halfcheetah" in args.dataset:
         kernel = "gaussian"
     else:
         kernel = "laplacian"
 
-    bear = d3rlpy.algos.BEARConfig(
+    bear = d3rlpy_marin.algos.BEARConfig(
         actor_learning_rate=1e-4,
         critic_learning_rate=3e-4,
         imitator_learning_rate=3e-4,
@@ -48,7 +48,7 @@ def main() -> None:
         n_steps=500000,
         n_steps_per_epoch=1000,
         save_interval=10,
-        evaluators={"environment": d3rlpy.metrics.EnvironmentEvaluator(env)},
+        evaluators={"environment": d3rlpy_marin.metrics.EnvironmentEvaluator(env)},
         experiment_name=f"BEAR_{args.dataset}_{args.seed}",
     )
 

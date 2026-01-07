@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 
-from d3rlpy.dataset import TrajectoryMiniBatch, TransitionMiniBatch
-from d3rlpy.types import Shape
+from d3rlpy_marin.dataset import TrajectoryMiniBatch, TransitionMiniBatch
+from d3rlpy_marin.types import Shape
 
 from ..testing_utils import create_partial_trajectory, create_transition
 
@@ -43,9 +43,7 @@ def test_transition_mini_batch(
             assert np.all(batch.next_observations[i] == ref_next_observations)
     else:
         ref_observations = np.array([t.observation for t in transitions])
-        ref_next_observations = np.array(
-            [t.next_observation for t in transitions]
-        )
+        ref_next_observations = np.array([t.next_observation for t in transitions])
         assert isinstance(batch.observations, np.ndarray)
         assert isinstance(batch.next_observations, np.ndarray)
         assert batch.observations.shape == (batch_size, *observation_shape)

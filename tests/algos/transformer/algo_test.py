@@ -6,7 +6,7 @@ import numpy as np
 import onnxruntime as ort
 import torch
 
-from d3rlpy.algos import (
+from d3rlpy_marin.algos import (
     GreedyTransformerActionSampler,
     IdentityTransformerActionSampler,
     TransformerActionSampler,
@@ -15,17 +15,17 @@ from d3rlpy.algos import (
     TransformerConfig,
     TransformerInput,
 )
-from d3rlpy.constants import ActionSpace
-from d3rlpy.dataset import (
+from d3rlpy_marin.constants import ActionSpace
+from d3rlpy_marin.dataset import (
     EpisodeGenerator,
     PartialTrajectory,
     TrajectoryMiniBatch,
     create_infinite_replay_buffer,
     is_tuple_shape,
 )
-from d3rlpy.logging import NoopAdapterFactory
-from d3rlpy.torch_utility import convert_to_numpy_recursively
-from d3rlpy.types import Float32NDArray, NDArray, Shape
+from d3rlpy_marin.logging import NoopAdapterFactory
+from d3rlpy_marin.torch_utility import convert_to_numpy_recursively
+from d3rlpy_marin.types import Float32NDArray, NDArray, Shape
 
 from ...base_test import from_json_tester, load_learnable_tester
 from ...testing_utils import (
@@ -167,9 +167,7 @@ def update_tester(
     trajectories = []
     for _ in range(algo.config.batch_size):
         observations = create_observations(observation_shape, context_size)
-        rewards: Float32NDArray = np.random.random((context_size, 1)).astype(
-            np.float32
-        )
+        rewards: Float32NDArray = np.random.random((context_size, 1)).astype(np.float32)
         if algo.get_action_type() == ActionSpace.DISCRETE:
             actions = np.random.randint(action_size, size=(context_size, 1))
         else:

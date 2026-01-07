@@ -4,11 +4,11 @@ import numpy as np
 import pytest
 import torch
 
-from d3rlpy.algos.transformer.inputs import (
+from d3rlpy_marin.algos.transformer.inputs import (
     TorchTransformerInput,
     TransformerInput,
 )
-from d3rlpy.dataset import batch_pad_array, batch_pad_observations
+from d3rlpy_marin.dataset import batch_pad_array, batch_pad_observations
 
 from ...dummy_scalers import (
     DummyActionScaler,
@@ -46,9 +46,7 @@ def test_torch_transformer_input(
 
     if length < context_size:
         pad_size = context_size - length
-        ref_observations = batch_pad_observations(
-            episode.observations, pad_size
-        )
+        ref_observations = batch_pad_observations(episode.observations, pad_size)
         ref_actions = batch_pad_array(episode.actions, pad_size)
         ref_rewards = batch_pad_array(episode.rewards, pad_size)
     else:
@@ -95,9 +93,7 @@ def test_torch_transformer_input(
 
     if observation_scaler:
         assert isinstance(ref_observations, np.ndarray)
-        assert np.allclose(
-            torch_inpt.observations.numpy()[0], ref_observations + 0.1
-        )
+        assert np.allclose(torch_inpt.observations.numpy()[0], ref_observations + 0.1)
     else:
         assert np.allclose(torch_inpt.observations.numpy()[0], ref_observations)
 
@@ -108,9 +104,7 @@ def test_torch_transformer_input(
 
     if reward_scaler:
         assert np.allclose(torch_inpt.rewards.numpy()[0], ref_rewards + 0.3)
-        assert np.allclose(
-            torch_inpt.returns_to_go.numpy()[0], ref_rewards + 0.3
-        )
+        assert np.allclose(torch_inpt.returns_to_go.numpy()[0], ref_rewards + 0.3)
     else:
         assert np.allclose(torch_inpt.rewards.numpy()[0], ref_rewards)
         assert np.allclose(torch_inpt.returns_to_go.numpy()[0], ref_rewards)

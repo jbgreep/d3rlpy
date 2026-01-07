@@ -2,7 +2,7 @@ from typing import Sequence
 
 import pytest
 
-from d3rlpy.dataset import FIFOBuffer, InfiniteBuffer
+from d3rlpy_marin.dataset import FIFOBuffer, InfiniteBuffer
 
 from ..testing_utils import create_episode
 

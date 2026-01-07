@@ -4,12 +4,12 @@ import numpy as np
 import pytest
 import torch
 
-from d3rlpy.dataset import (
+from d3rlpy_marin.dataset import (
     BasicTrajectorySlicer,
     BasicTransitionPicker,
     EpisodeGenerator,
 )
-from d3rlpy.preprocessing import (
+from d3rlpy_marin.preprocessing import (
     ClipRewardScaler,
     ConstantShiftRewardScaler,
     MinMaxRewardScaler,
@@ -17,7 +17,7 @@ from d3rlpy.preprocessing import (
     ReturnBasedRewardScaler,
     StandardRewardScaler,
 )
-from d3rlpy.types import Float32NDArray
+from d3rlpy_marin.types import Float32NDArray
 
 
 @pytest.mark.parametrize("batch_size", [32])
@@ -76,9 +76,7 @@ def test_clip_reward_scaler(
     assert np.all(y == multiplier * np.clip(rewards, low, high))
 
     # check reverse_transform_numpy
-    assert np.allclose(
-        scaler.reverse_transform_numpy(y), np.clip(rewards, low, high)
-    )
+    assert np.allclose(scaler.reverse_transform_numpy(y), np.clip(rewards, low, high))
 
     # check serialization and deserialization
     new_scaler = ClipRewardScaler.deserialize(scaler.serialize())
@@ -95,9 +93,7 @@ def test_min_max_reward_scaler(batch_size: int, multiplier: float) -> None:
     maximum = float(rewards.max())
     minimum = float(rewards.min())
 
-    scaler = MinMaxRewardScaler(
-        minimum=minimum, maximum=maximum, multiplier=multiplier
-    )
+    scaler = MinMaxRewardScaler(minimum=minimum, maximum=maximum, multiplier=multiplier)
     assert scaler.built
     assert scaler.get_type() == "min_max"
 
@@ -194,17 +190,13 @@ def test_min_max_reward_scaler_with_trajectory_slicer(
 @pytest.mark.parametrize("batch_size", [32])
 @pytest.mark.parametrize("eps", [0.3])
 @pytest.mark.parametrize("multiplier", [10.0])
-def test_standard_reward_scaler(
-    batch_size: int, eps: float, multiplier: float
-) -> None:
+def test_standard_reward_scaler(batch_size: int, eps: float, multiplier: float) -> None:
     rewards = 10.0 * np.random.random(batch_size).astype("f4")
 
     mean = float(np.mean(rewards))
     std = float(np.std(rewards))
 
-    scaler = StandardRewardScaler(
-        mean=mean, std=std, eps=eps, multiplier=multiplier
-    )
+    scaler = StandardRewardScaler(mean=mean, std=std, eps=eps, multiplier=multiplier)
     assert scaler.built
     assert scaler.get_type() == "standard"
 

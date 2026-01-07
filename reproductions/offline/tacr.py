@@ -1,6 +1,6 @@
 import argparse
 
-import d3rlpy
+import d3rlpy_marin
 
 
 def main() -> None:
@@ -11,11 +11,11 @@ def main() -> None:
     parser.add_argument("--compile", action="store_true")
     args = parser.parse_args()
 
-    dataset, env = d3rlpy.datasets.get_dataset(args.dataset)
+    dataset, env = d3rlpy_marin.datasets.get_dataset(args.dataset)
 
     # fix seed
-    d3rlpy.seed(args.seed)
-    d3rlpy.envs.seed_env(env, args.seed)
+    d3rlpy_marin.seed(args.seed)
+    d3rlpy_marin.envs.seed_env(env, args.seed)
 
     if "halfcheetah" in args.dataset:
         target_return = 6000
@@ -26,22 +26,22 @@ def main() -> None:
     else:
         raise ValueError("unsupported dataset")
 
-    tacr = d3rlpy.algos.TACRConfig(
+    tacr = d3rlpy_marin.algos.TACRConfig(
         batch_size=64,
         actor_learning_rate=1e-4,
-        actor_optim_factory=d3rlpy.optimizers.AdamWFactory(
+        actor_optim_factory=d3rlpy_marin.optimizers.AdamWFactory(
             weight_decay=1e-4,
             clip_grad_norm=0.25,
-            lr_scheduler_factory=d3rlpy.optimizers.WarmupSchedulerFactory(
+            lr_scheduler_factory=d3rlpy_marin.optimizers.WarmupSchedulerFactory(
                 warmup_steps=10000
             ),
         ),
-        actor_encoder_factory=d3rlpy.models.VectorEncoderFactory(
+        actor_encoder_factory=d3rlpy_marin.models.VectorEncoderFactory(
             [128],
             exclude_last_activation=True,
         ),
-        observation_scaler=d3rlpy.preprocessing.StandardObservationScaler(),
-        position_encoding_type=d3rlpy.PositionEncodingType.SIMPLE,
+        observation_scaler=d3rlpy_marin.preprocessing.StandardObservationScaler(),
+        position_encoding_type=d3rlpy_marin.PositionEncodingType.SIMPLE,
         context_size=20,
         num_heads=1,
         num_layers=3,

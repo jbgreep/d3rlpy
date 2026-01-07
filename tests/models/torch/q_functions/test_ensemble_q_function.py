@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from d3rlpy.models.torch import (
+from d3rlpy_marin.models.torch import (
     ContinuousEnsembleQFunctionForwarder,
     ContinuousIQNQFunction,
     ContinuousIQNQFunctionForwarder,
@@ -19,11 +19,11 @@ from d3rlpy.models.torch import (
     DiscreteQRQFunction,
     DiscreteQRQFunctionForwarder,
 )
-from d3rlpy.models.torch.q_functions.ensemble_q_function import (
+from d3rlpy_marin.models.torch.q_functions.ensemble_q_function import (
     _reduce_ensemble,
     _reduce_quantile_ensemble,
 )
-from d3rlpy.types import Shape
+from d3rlpy_marin.types import Shape
 
 from ....testing_utils import create_torch_observations
 from ..model_test import DummyEncoder, DummyEncoderWithAction
@@ -32,9 +32,7 @@ from ..model_test import DummyEncoder, DummyEncoderWithAction
 @pytest.mark.parametrize("n_ensembles", [2])
 @pytest.mark.parametrize("batch_size", [32])
 @pytest.mark.parametrize("reduction", ["min", "max", "mean", "none"])
-def test_reduce_ensemble(
-    n_ensembles: int, batch_size: int, reduction: str
-) -> None:
+def test_reduce_ensemble(n_ensembles: int, batch_size: int, reduction: str) -> None:
     y = torch.rand(n_ensembles, batch_size, 1)
     ret = _reduce_ensemble(y, reduction)
     if reduction == "min":
@@ -121,9 +119,7 @@ def test_discrete_ensemble_q_function_forwarder(
         else:
             raise ValueError
         forwarders.append(forwarder)
-    ensemble_forwarder = DiscreteEnsembleQFunctionForwarder(
-        forwarders, action_size
-    )
+    ensemble_forwarder = DiscreteEnsembleQFunctionForwarder(forwarders, action_size)
 
     # check output shape
     x = create_torch_observations(observation_shape, batch_size)
@@ -165,9 +161,7 @@ def test_discrete_ensemble_q_function_forwarder(
 
     # check td computation
     obs_t = create_torch_observations(observation_shape, batch_size)
-    act_t = torch.randint(
-        0, action_size, size=(batch_size, 1), dtype=torch.int64
-    )
+    act_t = torch.randint(0, action_size, size=(batch_size, 1), dtype=torch.int64)
     rew_tp1 = torch.rand(batch_size, 1)
     ter_tp1 = torch.randint(2, size=(batch_size, 1))
     if q_func_factory == "mean":
@@ -231,9 +225,7 @@ def test_ensemble_continuous_q_function(
         forwarder: ContinuousQFunctionForwarder
         encoder = DummyEncoderWithAction(observation_shape, action_size)
         if q_func_factory == "mean":
-            q_func = ContinuousMeanQFunction(
-                encoder, encoder.get_feature_size()
-            )
+            q_func = ContinuousMeanQFunction(encoder, encoder.get_feature_size())
             forwarder = ContinuousMeanQFunctionForwarder(q_func)
         elif q_func_factory == "qr":
             q_func = ContinuousQRQFunction(
@@ -253,9 +245,7 @@ def test_ensemble_continuous_q_function(
             raise ValueError
         forwarders.append(forwarder)
 
-    ensemble_forwarder = ContinuousEnsembleQFunctionForwarder(
-        forwarders, action_size
-    )
+    ensemble_forwarder = ContinuousEnsembleQFunctionForwarder(forwarders, action_size)
 
     # check output shape
     x = create_torch_observations(observation_shape, batch_size)

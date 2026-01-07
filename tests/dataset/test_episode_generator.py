@@ -3,8 +3,8 @@ import re
 import numpy as np
 import pytest
 
-from d3rlpy.dataset import EpisodeGenerator
-from d3rlpy.types import Float32NDArray, Shape
+from d3rlpy_marin.dataset import EpisodeGenerator
+from d3rlpy_marin.types import Float32NDArray, Shape
 
 from ..testing_utils import create_observations
 
@@ -12,9 +12,7 @@ from ..testing_utils import create_observations
 @pytest.mark.parametrize("observation_shape", [(4,), ((4,), (8,))])
 @pytest.mark.parametrize("action_size", [2])
 @pytest.mark.parametrize("length", [1000])
-@pytest.mark.parametrize(
-    "episode_end_type", ["terminal", "truncated", "overlap"]
-)
+@pytest.mark.parametrize("episode_end_type", ["terminal", "truncated", "overlap"])
 def test_episode_generator(
     observation_shape: Shape,
     action_size: int,

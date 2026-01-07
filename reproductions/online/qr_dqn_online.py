@@ -2,7 +2,7 @@ import argparse
 
 import gymnasium as gym
 
-import d3rlpy
+import d3rlpy_marin
 
 
 def main() -> None:
@@ -14,35 +14,37 @@ def main() -> None:
     args = parser.parse_args()
 
     # get wrapped atari environment
-    env = d3rlpy.envs.Atari(gym.make(args.env), num_stack=4)
-    eval_env = d3rlpy.envs.Atari(gym.make(args.env), num_stack=4, is_eval=True)
+    env = d3rlpy_marin.envs.Atari(gym.make(args.env), num_stack=4)
+    eval_env = d3rlpy_marin.envs.Atari(gym.make(args.env), num_stack=4, is_eval=True)
 
     # fix seed
-    d3rlpy.seed(args.seed)
-    d3rlpy.envs.seed_env(env, args.seed)
-    d3rlpy.envs.seed_env(eval_env, args.seed)
+    d3rlpy_marin.seed(args.seed)
+    d3rlpy_marin.envs.seed_env(env, args.seed)
+    d3rlpy_marin.envs.seed_env(eval_env, args.seed)
 
     # setup algorithm
-    dqn = d3rlpy.algos.DQNConfig(
+    dqn = d3rlpy_marin.algos.DQNConfig(
         batch_size=32,
         learning_rate=5e-5,
-        optim_factory=d3rlpy.optimizers.AdamFactory(eps=1e-2 / 32),
+        optim_factory=d3rlpy_marin.optimizers.AdamFactory(eps=1e-2 / 32),
         target_update_interval=10000 // 4,
-        q_func_factory=d3rlpy.models.q_functions.QRQFunctionFactory(n_quantiles=200),
-        observation_scaler=d3rlpy.preprocessing.PixelObservationScaler(),
+        q_func_factory=d3rlpy_marin.models.q_functions.QRQFunctionFactory(
+            n_quantiles=200
+        ),
+        observation_scaler=d3rlpy_marin.preprocessing.PixelObservationScaler(),
         compile_graph=args.compile,
     ).create(device=args.gpu)
 
     # replay buffer for experience replay
-    buffer = d3rlpy.dataset.create_fifo_replay_buffer(
+    buffer = d3rlpy_marin.dataset.create_fifo_replay_buffer(
         limit=1000000,
-        transition_picker=d3rlpy.dataset.FrameStackTransitionPicker(n_frames=4),
-        writer_preprocessor=d3rlpy.dataset.LastFrameWriterPreprocess(),
+        transition_picker=d3rlpy_marin.dataset.FrameStackTransitionPicker(n_frames=4),
+        writer_preprocessor=d3rlpy_marin.dataset.LastFrameWriterPreprocess(),
         env=env,
     )
 
     # epilon-greedy explorer
-    explorer = d3rlpy.algos.LinearDecayEpsilonGreedy(
+    explorer = d3rlpy_marin.algos.LinearDecayEpsilonGreedy(
         start_epsilon=1.0, end_epsilon=0.01, duration=1000000
     )
 

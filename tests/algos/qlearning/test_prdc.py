@@ -2,13 +2,13 @@ from typing import Optional
 
 import pytest
 
-from d3rlpy.algos.qlearning.prdc import PRDCConfig
-from d3rlpy.models import (
+from d3rlpy_marin.algos.qlearning.prdc import PRDCConfig
+from d3rlpy_marin.models import (
     MeanQFunctionFactory,
     QFunctionFactory,
     QRQFunctionFactory,
 )
-from d3rlpy.types import Shape
+from d3rlpy_marin.types import Shape
 
 from ...models.torch.model_test import DummyEncoderFactory
 from ...testing_utils import create_scaler_tuple

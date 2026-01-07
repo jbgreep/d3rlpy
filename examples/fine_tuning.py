@@ -1,7 +1,7 @@
 import argparse
 import copy
 
-import d3rlpy
+import d3rlpy_marin
 
 
 def main() -> None:
@@ -11,13 +11,13 @@ def main() -> None:
     parser.add_argument("--gpu", type=int)
     args = parser.parse_args()
 
-    dataset, env = d3rlpy.datasets.get_dataset(args.dataset)
+    dataset, env = d3rlpy_marin.datasets.get_dataset(args.dataset)
 
     # fix seed
-    d3rlpy.seed(args.seed)
-    d3rlpy.envs.seed_env(env, args.seed)
+    d3rlpy_marin.seed(args.seed)
+    d3rlpy_marin.envs.seed_env(env, args.seed)
 
-    cql = d3rlpy.algos.CQLConfig(
+    cql = d3rlpy_marin.algos.CQLConfig(
         actor_learning_rate=1e-4,
         critic_learning_rate=3e-4,
         temp_learning_rate=1e-4,
@@ -33,11 +33,11 @@ def main() -> None:
         n_steps=100000,
         n_steps_per_epoch=1000,
         save_interval=10,
-        evaluators={"environment": d3rlpy.metrics.EnvironmentEvaluator(env)},
+        evaluators={"environment": d3rlpy_marin.metrics.EnvironmentEvaluator(env)},
         experiment_name=f"CQL_pretraining_{args.dataset}_{args.seed}",
     )
 
-    sac = d3rlpy.algos.SACConfig(
+    sac = d3rlpy_marin.algos.SACConfig(
         actor_learning_rate=3e-4,
         critic_learning_rate=3e-4,
         temp_learning_rate=3e-4,
@@ -50,14 +50,14 @@ def main() -> None:
     sac.copy_q_function_from(cql)  # type: ignore
 
     # prepare FIFO buffer filled with dataset episodes
-    buffer = d3rlpy.dataset.create_fifo_replay_buffer(
+    buffer = d3rlpy_marin.dataset.create_fifo_replay_buffer(
         limit=100000,
         episodes=dataset.episodes,
     )
 
     # finetuning
     eval_env = copy.deepcopy(env)
-    d3rlpy.envs.seed_env(eval_env, args.seed)
+    d3rlpy_marin.envs.seed_env(eval_env, args.seed)
     sac.fit_online(
         env,
         buffer=buffer,

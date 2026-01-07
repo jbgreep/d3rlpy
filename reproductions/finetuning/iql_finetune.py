@@ -2,7 +2,7 @@
 import argparse
 import copy
 
-import d3rlpy
+import d3rlpy_marin
 
 
 def main() -> None:
@@ -13,20 +13,20 @@ def main() -> None:
     parser.add_argument("--compile", action="store_true")
     args = parser.parse_args()
 
-    dataset, env = d3rlpy.datasets.get_minari(args.dataset)
+    dataset, env = d3rlpy_marin.datasets.get_minari(args.dataset)
 
     # fix seed
-    d3rlpy.seed(args.seed)
-    d3rlpy.envs.seed_env(env, args.seed)
+    d3rlpy_marin.seed(args.seed)
+    d3rlpy_marin.envs.seed_env(env, args.seed)
 
     # for antmaze datasets
-    reward_scaler = d3rlpy.preprocessing.ConstantShiftRewardScaler(shift=-1)
+    reward_scaler = d3rlpy_marin.preprocessing.ConstantShiftRewardScaler(shift=-1)
 
-    iql = d3rlpy.algos.IQLConfig(
+    iql = d3rlpy_marin.algos.IQLConfig(
         actor_learning_rate=3e-4,
         critic_learning_rate=3e-4,
-        actor_optim_factory=d3rlpy.optimizers.AdamFactory(
-            lr_scheduler_factory=d3rlpy.optimizers.CosineAnnealingLRFactory(
+        actor_optim_factory=d3rlpy_marin.optimizers.AdamFactory(
+            lr_scheduler_factory=d3rlpy_marin.optimizers.CosineAnnealingLRFactory(
                 T_max=1000000
             ),
         ),
@@ -44,7 +44,7 @@ def main() -> None:
         n_steps=1000000,
         n_steps_per_epoch=100000,
         save_interval=10,
-        evaluators={"environment": d3rlpy.metrics.EnvironmentEvaluator(env)},
+        evaluators={"environment": d3rlpy_marin.metrics.EnvironmentEvaluator(env)},
         experiment_name=f"IQL_pretraining_{args.dataset}_{args.seed}",
     )
 
@@ -54,13 +54,13 @@ def main() -> None:
         g["lr"] = iql.config.actor_learning_rate
 
     # prepare FIFO buffer filled with dataset episodes
-    buffer = d3rlpy.dataset.create_fifo_replay_buffer(1000000)
+    buffer = d3rlpy_marin.dataset.create_fifo_replay_buffer(1000000)
     for episode in dataset.episodes:
         buffer.append_episode(episode)
 
     # finetuning
     eval_env = copy.deepcopy(env)
-    d3rlpy.envs.seed_env(eval_env, args.seed)
+    d3rlpy_marin.envs.seed_env(eval_env, args.seed)
     iql.fit_online(
         env,
         buffer=buffer,

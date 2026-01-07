@@ -1,13 +1,13 @@
 import pytest
 import torch
 
-from d3rlpy.models.torch import (
+from d3rlpy_marin.models.torch import (
     ContinuousIQNQFunction,
     ContinuousIQNQFunctionForwarder,
     DiscreteIQNQFunction,
     DiscreteIQNQFunctionForwarder,
 )
-from d3rlpy.types import Shape
+from d3rlpy_marin.types import Shape
 
 from ....testing_utils import create_torch_observations
 from ..model_test import (

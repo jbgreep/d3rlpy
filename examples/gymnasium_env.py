@@ -2,7 +2,7 @@ import argparse
 
 import gymnasium
 
-import d3rlpy
+import d3rlpy_marin
 
 
 def main() -> None:
@@ -17,12 +17,12 @@ def main() -> None:
     eval_env = gymnasium.make(args.env)
 
     # fix seed
-    d3rlpy.seed(args.seed)
-    d3rlpy.envs.seed_env(env, args.seed)
-    d3rlpy.envs.seed_env(eval_env, args.seed)
+    d3rlpy_marin.seed(args.seed)
+    d3rlpy_marin.envs.seed_env(env, args.seed)
+    d3rlpy_marin.envs.seed_env(eval_env, args.seed)
 
     # setup algorithm
-    sac = d3rlpy.algos.SACConfig(
+    sac = d3rlpy_marin.algos.SACConfig(
         batch_size=256,
         actor_learning_rate=3e-4,
         critic_learning_rate=3e-4,
@@ -30,7 +30,7 @@ def main() -> None:
     ).create(device=args.gpu)
 
     # replay buffer for experience replay
-    buffer = d3rlpy.dataset.create_fifo_replay_buffer(limit=1000000, env=env)
+    buffer = d3rlpy_marin.dataset.create_fifo_replay_buffer(limit=1000000, env=env)
 
     # start training
     sac.fit_online(

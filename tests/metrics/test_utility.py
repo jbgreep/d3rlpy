@@ -7,9 +7,13 @@ import numpy as np
 import pytest
 from gymnasium import spaces
 
-from d3rlpy.metrics.utility import evaluate_qlearning_with_environment
-from d3rlpy.preprocessing import ActionScaler, ObservationScaler, RewardScaler
-from d3rlpy.types import NDArray, Observation
+from d3rlpy_marin.metrics.utility import evaluate_qlearning_with_environment
+from d3rlpy_marin.preprocessing import (
+    ActionScaler,
+    ObservationScaler,
+    RewardScaler,
+)
+from d3rlpy_marin.types import NDArray, Observation
 
 
 class DummyAlgo:

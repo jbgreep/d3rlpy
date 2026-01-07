@@ -1,6 +1,11 @@
 import pytest
 
-from d3rlpy.datasets import get_cartpole, get_dataset, get_minari, get_pendulum
+from d3rlpy_marin.datasets import (
+    get_cartpole,
+    get_dataset,
+    get_minari,
+    get_pendulum,
+)
 
 
 @pytest.mark.parametrize("dataset_type", ["replay", "random"])
@@ -33,9 +38,7 @@ def test_get_dataset(env_name: str) -> None:
     ],
 )
 @pytest.mark.parametrize("tuple_observation", [False, True])
-def test_get_minari(
-    dataset_name: str, env_name: str, tuple_observation: bool
-) -> None:
+def test_get_minari(dataset_name: str, env_name: str, tuple_observation: bool) -> None:
     dataset, env = get_minari(dataset_name, tuple_observation=tuple_observation)
     assert env.unwrapped.spec.id == env_name  # type: ignore
 

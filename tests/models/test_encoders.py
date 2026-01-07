@@ -3,13 +3,13 @@ from typing import Sequence
 
 import pytest
 
-from d3rlpy.models.encoders import (
+from d3rlpy_marin.models.encoders import (
     DefaultEncoderFactory,
     PixelEncoderFactory,
     SimBaEncoderFactory,
     VectorEncoderFactory,
 )
-from d3rlpy.models.torch.encoders import (
+from d3rlpy_marin.models.torch.encoders import (
     PixelEncoder,
     PixelEncoderWithAction,
     SimBaEncoder,

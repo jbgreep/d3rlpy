@@ -2,13 +2,17 @@ from typing import Sequence
 
 import torch
 
-from d3rlpy.dataset import (
+from d3rlpy_marin.dataset import (
     EpisodeBase,
     TrajectorySlicerProtocol,
     TransitionPickerProtocol,
 )
-from d3rlpy.preprocessing import ActionScaler, ObservationScaler, RewardScaler
-from d3rlpy.types import GymEnv, NDArray
+from d3rlpy_marin.preprocessing import (
+    ActionScaler,
+    ObservationScaler,
+    RewardScaler,
+)
+from d3rlpy_marin.types import GymEnv, NDArray
 
 
 class DummyObservationScaler(ObservationScaler):

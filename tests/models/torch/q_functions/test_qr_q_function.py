@@ -3,16 +3,16 @@ import numpy as np
 import pytest
 import torch
 
-from d3rlpy.models.torch import (
+from d3rlpy_marin.models.torch import (
     ContinuousQRQFunction,
     ContinuousQRQFunctionForwarder,
     DiscreteQRQFunction,
     DiscreteQRQFunctionForwarder,
 )
-from d3rlpy.models.torch.q_functions.utility import (
+from d3rlpy_marin.models.torch.q_functions.utility import (
     pick_quantile_value_by_action,
 )
-from d3rlpy.types import Shape
+from d3rlpy_marin.types import Shape
 
 from ....testing_utils import create_torch_observations
 from ..model_test import (
@@ -142,9 +142,7 @@ def test_continuous_qr_q_function(
     batch_size: int,
 ) -> None:
     encoder = DummyEncoderWithAction(observation_shape, action_size)
-    q_func = ContinuousQRQFunction(
-        encoder, encoder.get_feature_size(), n_quantiles
-    )
+    q_func = ContinuousQRQFunction(encoder, encoder.get_feature_size(), n_quantiles)
 
     # check output shape
     x = create_torch_observations(observation_shape, batch_size)
@@ -179,9 +177,7 @@ def test_continuous_qr_q_function_forwarder(
     gamma: float,
 ) -> None:
     encoder = DummyEncoderWithAction(observation_shape, action_size)
-    q_func = ContinuousQRQFunction(
-        encoder, encoder.get_feature_size(), n_quantiles
-    )
+    q_func = ContinuousQRQFunction(encoder, encoder.get_feature_size(), n_quantiles)
     forwarder = ContinuousQRQFunctionForwarder(q_func, n_quantiles)
 
     # check output shape

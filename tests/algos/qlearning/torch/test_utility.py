@@ -1,20 +1,20 @@
 import pytest
 
-from d3rlpy.algos.qlearning.torch.utility import sample_q_values_with_policy
-from d3rlpy.models.builders import (
+from d3rlpy_marin.algos.qlearning.torch.utility import (
+    sample_q_values_with_policy,
+)
+from d3rlpy_marin.models.builders import (
     create_continuous_q_function,
     create_normal_policy,
 )
-from d3rlpy.models.q_functions import MeanQFunctionFactory
-from d3rlpy.types import Shape
+from d3rlpy_marin.models.q_functions import MeanQFunctionFactory
+from d3rlpy_marin.types import Shape
 
 from ....models.torch.model_test import DummyEncoderFactory
 from ....testing_utils import create_torch_observations
 
 
-@pytest.mark.parametrize(
-    "observation_shape", [(100,), (4, 84, 84), ((100,), (200,))]
-)
+@pytest.mark.parametrize("observation_shape", [(100,), (4, 84, 84), ((100,), (200,))])
 @pytest.mark.parametrize("action_size", [4])
 @pytest.mark.parametrize("n_action_samples", [10])
 @pytest.mark.parametrize("batch_size", [256])

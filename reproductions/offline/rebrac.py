@@ -1,6 +1,6 @@
 import argparse
 
-import d3rlpy
+import d3rlpy_marin
 
 BETA_TABLE: dict[str, tuple[float, float]] = {
     "halfcheetah-random": (0.001, 0.1),
@@ -31,15 +31,15 @@ def main() -> None:
     parser.add_argument("--compile", action="store_true")
     args = parser.parse_args()
 
-    dataset, env = d3rlpy.datasets.get_dataset(args.dataset)
+    dataset, env = d3rlpy_marin.datasets.get_dataset(args.dataset)
 
     # fix seed
-    d3rlpy.seed(args.seed)
-    d3rlpy.envs.seed_env(env, args.seed)
+    d3rlpy_marin.seed(args.seed)
+    d3rlpy_marin.envs.seed_env(env, args.seed)
 
     # deeper network
-    actor_encoder = d3rlpy.models.VectorEncoderFactory([256, 256, 256])
-    critic_encoder = d3rlpy.models.VectorEncoderFactory(
+    actor_encoder = d3rlpy_marin.models.VectorEncoderFactory([256, 256, 256])
+    critic_encoder = d3rlpy_marin.models.VectorEncoderFactory(
         [256, 256, 256], use_layer_norm=True
     )
 
@@ -49,7 +49,7 @@ def main() -> None:
             actor_beta, critic_beta = beta_from_paper
             break
 
-    rebrac = d3rlpy.algos.ReBRACConfig(
+    rebrac = d3rlpy_marin.algos.ReBRACConfig(
         actor_learning_rate=1e-3,
         critic_learning_rate=1e-3,
         batch_size=1024,
@@ -61,7 +61,7 @@ def main() -> None:
         update_actor_interval=2,
         actor_beta=actor_beta,
         critic_beta=critic_beta,
-        observation_scaler=d3rlpy.preprocessing.StandardObservationScaler(),
+        observation_scaler=d3rlpy_marin.preprocessing.StandardObservationScaler(),
         compile_graph=args.compile,
     ).create(device=args.gpu)
 
@@ -70,7 +70,7 @@ def main() -> None:
         n_steps=1000000,
         n_steps_per_epoch=1000,
         save_interval=10,
-        evaluators={"environment": d3rlpy.metrics.EnvironmentEvaluator(env)},
+        evaluators={"environment": d3rlpy_marin.metrics.EnvironmentEvaluator(env)},
         experiment_name=f"ReBRAC_{args.dataset}_{args.seed}",
     )
 
