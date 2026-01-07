@@ -8,7 +8,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/c9162eb736d0b0f612d8/maintainability)](https://codeclimate.com/github/takuseno/d3rlpy/maintainability)
 ![MIT](https://img.shields.io/badge/license-MIT-blue)
 
-d3rlpy is an offline deep reinforcement learning library for practitioners and researchers.
+d3rlpy is an offline deep reinforcement learning library for practitioners and researchers. This repository is forked from the original repository to remove the dependency of the old gym package.
 
 ```py
 import d3rlpy
@@ -56,7 +56,6 @@ d3rlpy supports Linux, macOS and Windows.
 Installing d3rlpy package will install or upgrade the following packages to satisfy requirements:
 - torch>=2.5.0
 - tqdm>=4.66.3
-- gym>=0.26.0
 - gymnasium==1.0.0
 - click
 - colorama
@@ -178,7 +177,7 @@ See more Atari datasets at [d4rl-atari](https://github.com/takuseno/d4rl-atari).
 ### Online Training
 ```py
 import d3rlpy
-import gym
+import gymnasium as gym
 
 # prepare environment
 env = gym.make('Hopper-v3')

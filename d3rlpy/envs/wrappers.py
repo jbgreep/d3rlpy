@@ -8,8 +8,7 @@ from typing import (
     Union,
 )
 
-import gym
-import gymnasium
+import gymnasium as gym
 import numpy as np
 
 try:
@@ -17,11 +16,8 @@ try:
 except ImportError:
     cv2 = None
 
-from gym.spaces import Box
-from gym.wrappers.transform_reward import TransformReward
-from gymnasium.spaces import Box as GymnasiumBox
-from gymnasium.spaces import Dict as GymnasiumDictSpace
-from gymnasium.spaces import Tuple as GymnasiumTuple
+from gymnasium.spaces import Box, Dict, Tuple
+from gymnasium.wrappers import TransformReward
 
 from ..types import NDArray
 
@@ -37,7 +33,7 @@ _ObsType = TypeVar("_ObsType")
 _ActType = TypeVar("_ActType")
 
 
-class ChannelFirst(gym.Wrapper[_ObsType, _ActType]):
+class ChannelFirst(gym.Wrapper):
     """Channel-first wrapper for image observation environments.
 
     d3rlpy expects channel-first images since it's built with PyTorch.
@@ -97,7 +93,7 @@ class ChannelFirst(gym.Wrapper[_ObsType, _ActType]):
         return observation_T, info  # type: ignore
 
 
-class FrameStack(gym.Wrapper[NDArray, _ActType]):
+class FrameStack(gym.Wrapper):
     """Observation wrapper that stacks the observations in a rolling manner.
 
     This wrapper is implemented based on gym.wrappers.FrameStack. The
@@ -151,7 +147,7 @@ class FrameStack(gym.Wrapper[NDArray, _ActType]):
 
 
 # https://github.com/openai/gym/blob/0.17.3/gym/wrappers/atari_preprocessing.py
-class AtariPreprocessing(gym.Wrapper[NDArray, int]):
+class AtariPreprocessing(gym.Wrapper):
     r"""Atari 2600 preprocessings.
     This class follows the guidelines in
     Machado et al. (2018), "Revisiting the Arcade Learning Environment:
@@ -251,9 +247,7 @@ class AtariPreprocessing(gym.Wrapper[NDArray, int]):
             low=_low, high=_high, shape=_shape, dtype=_obs_dtype
         )
 
-    def step(
-        self, action: int
-    ) -> tuple[NDArray, float, bool, bool, dict[str, Any]]:
+    def step(self, action: int) -> tuple[NDArray, float, bool, bool, dict[str, Any]]:
         R = 0.0
 
         for t in range(self.frame_skip):
@@ -330,7 +324,7 @@ class AtariPreprocessing(gym.Wrapper[NDArray, int]):
         return obs  # type: ignore
 
 
-class Atari(gym.Wrapper[NDArray, int]):
+class Atari(gym.Wrapper):
     """Atari 2600 wrapper for experiments.
 
     Args:
@@ -356,7 +350,7 @@ class Atari(gym.Wrapper[NDArray, int]):
 
 
 def _get_keys_from_observation_space(
-    observation_space: GymnasiumDictSpace,
+    observation_space: Dict,
 ) -> Sequence[str]:
     return sorted(list(observation_space.keys()))
 
@@ -366,51 +360,44 @@ def _flat_dict_observation(observation: dict[str, NDArray]) -> NDArray:
     return np.concatenate([observation[key] for key in sorted_keys])
 
 
-class GoalConcatWrapper(
-    gymnasium.Wrapper[
-        Union[NDArray, tuple[NDArray, NDArray]],
-        _ActType,
-        dict[str, NDArray],
-        _ActType,
-    ]
-):
-    r"""GaolConcatWrapper class for goal-conditioned environments.
+class GoalConcatWrapper(gym.Wrapper):
+    r"""GoalConcatWrapper class for goal-conditioned environments.
 
     This class concatenates a main observation and a goal observation to make a
     single numpy observation output. This is especially useful with environments
     such as AntMaze int the non-hindsight training case.
 
     Args:
-        env (Union[gym.Env, gymnasium.Env]): Goal-conditioned environment.
+        env (gym.Env): Goal-conditioned environment.
         observation_key (str): String key of the main observation.
         goal_key (str): String key of the goal observation.
         tuple_observation (bool): Flag to include goals as tuple element.
     """
 
-    _observation_space: Union[GymnasiumBox, GymnasiumTuple]
+    _observation_space: Union[Box, Tuple]
     _observation_key: str
     _goal_key: str
     _tuple_observation: bool
 
     def __init__(
         self,
-        env: gymnasium.Env[dict[str, NDArray], _ActType],
+        env: gym.Env[dict[str, NDArray], _ActType],
         observation_key: str = "observation",
         goal_key: str = "desired_goal",
         tuple_observation: bool = False,
     ):
         super().__init__(env)
-        assert isinstance(env.observation_space, GymnasiumDictSpace)
+        assert isinstance(env.observation_space, Dict)
         self._observation_key = observation_key
         self._goal_key = goal_key
         self._tuple_observation = tuple_observation
         observation_space = env.observation_space[observation_key]
-        assert isinstance(observation_space, GymnasiumBox)
+        assert isinstance(observation_space, Box)
         goal_space = env.observation_space[goal_key]
-        if isinstance(goal_space, GymnasiumBox):
+        if isinstance(goal_space, Box):
             goal_space_low = goal_space.low
             goal_space_high = goal_space.high
-        elif isinstance(goal_space, GymnasiumDictSpace):
+        elif isinstance(goal_space, Dict):
             goal_keys = _get_keys_from_observation_space(goal_space)
             goal_spaces = [goal_space[key] for key in goal_keys]
             goal_space_low = np.concatenate(
@@ -436,13 +423,11 @@ class GoalConcatWrapper(
         else:
             raise ValueError(f"unsupported goal space: {type(goal_space)}")
         if tuple_observation:
-            self._observation_space = GymnasiumTuple(
-                [observation_space, goal_space]
-            )
+            self._observation_space = Tuple([observation_space, goal_space])
         else:
             low = np.concatenate([observation_space.low, goal_space_low])
             high = np.concatenate([observation_space.high, goal_space_high])
-            self._observation_space = GymnasiumBox(
+            self._observation_space = Box(
                 low=low,
                 high=high,
                 shape=low.shape,

@@ -19,7 +19,7 @@ def evaluate_qlearning_with_environment(
 
     .. code-block:: python
 
-        import gym
+        import gymnasium as gym
 
         from d3rlpy.algos import DQN
         from d3rlpy.metrics.utility import evaluate_with_environment
@@ -53,9 +53,7 @@ def evaluate_qlearning_with_environment(
                 if isinstance(observation, np.ndarray):
                     observation = np.expand_dims(observation, axis=0)
                 elif isinstance(observation, (tuple, list)):
-                    observation = [
-                        np.expand_dims(o, axis=0) for o in observation
-                    ]
+                    observation = [np.expand_dims(o, axis=0) for o in observation]
                 else:
                     raise ValueError(
                         f"Unsupported observation type: {type(observation)}"
@@ -80,7 +78,7 @@ def evaluate_transformer_with_environment(
 
     .. code-block:: python
 
-        import gym
+        import gymnasium as gym
 
         from d3rlpy.algos import DQN
         from d3rlpy.metrics.utility import evaluate_with_environment

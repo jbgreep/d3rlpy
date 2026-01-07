@@ -11,7 +11,7 @@ Here is a simple example in d3rlpy.
 .. code-block:: python
 
   import d3rlpy
-  import gym
+  import gymnasium as gym
 
   # set random seeds in random module, numpy module and PyTorch module.
   d3rlpy.seed(313)

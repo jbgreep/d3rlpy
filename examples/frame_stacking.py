@@ -1,6 +1,6 @@
 import argparse
 
-import gym
+import gymnasium as gym
 
 import d3rlpy
 

@@ -4,8 +4,7 @@ import pickle
 from abc import ABCMeta, abstractmethod
 from typing import BinaryIO, Generic, Optional, TypeVar, Union
 
-from gym.spaces import Box
-from gymnasium.spaces import Box as GymnasiumBox
+from gymnasium.spaces import Box
 from typing_extensions import Self
 
 from ._version import __version__
@@ -91,9 +90,7 @@ class ImplBase(metaclass=ABCMeta):
 class LearnableConfig(DynamicConfig):
     batch_size: int = 256
     gamma: float = 0.99
-    observation_scaler: Optional[ObservationScaler] = (
-        make_observation_scaler_field()
-    )
+    observation_scaler: Optional[ObservationScaler] = make_observation_scaler_field()
     action_scaler: Optional[ActionScaler] = make_action_scaler_field()
     reward_scaler: Optional[RewardScaler] = make_reward_scaler_field()
     compile_graph: bool = False
@@ -117,9 +114,7 @@ class LearnableConfig(DynamicConfig):
         raise NotImplementedError
 
 
-register_learnable, make_learnable_field = generate_config_registration(
-    LearnableConfig
-)
+register_learnable, make_learnable_field = generate_config_registration(LearnableConfig)
 
 
 @dataclasses.dataclass()
@@ -220,8 +215,7 @@ class LearnableBase(Generic[TImpl_co, TConfig_co], metaclass=ABCMeta):
     ):
         if self.get_action_type() == ActionSpace.DISCRETE:
             assert config.action_scaler is None, (
-                "action_scaler cannot be used with discrete action-space "
-                "algorithms."
+                "action_scaler cannot be used with discrete action-space " "algorithms."
             )
         self._config = config
         self._device = _process_device(device)
@@ -274,9 +268,7 @@ class LearnableBase(Generic[TImpl_co, TConfig_co], metaclass=ABCMeta):
             self._impl.load_model(f)
 
     @classmethod
-    def from_json(
-        cls: type[Self], fname: str, device: DeviceArg = False
-    ) -> Self:
+    def from_json(cls: type[Self], fname: str, device: DeviceArg = False) -> Self:
         r"""Construct algorithm from params.json file.
 
         .. code-block:: python
@@ -312,9 +304,7 @@ class LearnableBase(Generic[TImpl_co, TConfig_co], metaclass=ABCMeta):
         self.inner_create_impl(observation_shape, action_size)
 
     @abstractmethod
-    def inner_create_impl(
-        self, observation_shape: Shape, action_size: int
-    ) -> None:
+    def inner_create_impl(self, observation_shape: Shape, action_size: int) -> None:
         pass
 
     def build_with_dataset(self, dataset: ReplayBuffer) -> None:
@@ -323,9 +313,7 @@ class LearnableBase(Generic[TImpl_co, TConfig_co], metaclass=ABCMeta):
         Args:
             dataset: dataset.
         """
-        observation_shape = (
-            dataset.sample_transition().observation_signature.shape[0]
-        )
+        observation_shape = dataset.sample_transition().observation_signature.shape[0]
         self.create_impl(observation_shape, dataset.dataset_info.action_size)
 
     def build_with_env(self, env: GymEnv) -> None:
@@ -335,7 +323,7 @@ class LearnableBase(Generic[TImpl_co, TConfig_co], metaclass=ABCMeta):
             env: gym-like environment.
         """
         assert isinstance(
-            env.observation_space, (Box, GymnasiumBox)
+            env.observation_space, Box
         ), f"Unsupported observation space: {type(env.observation_space)}"
         observation_shape = env.observation_space.shape
         action_size = detect_action_size_from_env(env)

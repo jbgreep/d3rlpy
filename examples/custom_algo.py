@@ -2,7 +2,7 @@ import copy
 import dataclasses
 from typing import Sequence, cast
 
-import gym
+import gymnasium as gym
 import torch
 import torch.nn.functional as F
 from torch import nn
@@ -87,9 +87,7 @@ class CustomAlgoImpl(d3rlpy.algos.QLearningAlgoImplBase):
         q = self._modules.q_func(x)
         return q.argmax(dim=1)
 
-    def inner_sample_action(
-        self, x: d3rlpy.types.TorchObservation
-    ) -> torch.Tensor:
+    def inner_sample_action(self, x: d3rlpy.types.TorchObservation) -> torch.Tensor:
         return self.inner_predict_best_action(x)
 
     def inner_predict_value(
@@ -117,9 +115,7 @@ class CustomAlgoConfig(d3rlpy.base.LearnableConfig):
         return "custom"
 
 
-class CustomAlgo(
-    d3rlpy.algos.QLearningAlgoBase[CustomAlgoImpl, CustomAlgoConfig]
-):
+class CustomAlgo(d3rlpy.algos.QLearningAlgoBase[CustomAlgoImpl, CustomAlgoConfig]):
     def inner_create_impl(
         self, observation_shape: d3rlpy.types.Shape, action_size: int
     ) -> None:

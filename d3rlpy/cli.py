@@ -8,10 +8,9 @@ import subprocess
 from typing import TYPE_CHECKING, Any, Optional, Sequence
 
 import click
-import gym
-import gymnasium
+import gymnasium as gym
 import numpy as np
-from gym.wrappers import RecordVideo
+from gymnasium.wrappers import RecordVideo
 
 from ._version import __version__
 from .algos import QLearningAlgoBase, TransformerAlgoBase
@@ -71,9 +70,7 @@ def stats(path: str) -> None:
 
 @cli.command(short_help="Plot saved metrics (requires matplotlib).")
 @click.argument("path", nargs=-1)
-@click.option(
-    "--window", default=1, show_default=True, help="Moving average window."
-)
+@click.option("--window", default=1, show_default=True, help="Moving average window.")
 @click.option("--show-steps", is_flag=True, help="Use iterations on x-axis.")
 @click.option("--show-max", is_flag=True, help="Show maximum value.")
 @click.option("--label", multiple=True, help="Label in legend.")
@@ -211,9 +208,7 @@ def plot_all(
 
 
 @cli.command(
-    short_help=(
-        "Export saved model as inference model format (ONNX or TorchScript)."
-    )
+    short_help=("Export saved model as inference model format (ONNX or TorchScript).")
 )
 @click.argument("model_path")
 @click.argument("output_path")
@@ -242,9 +237,7 @@ def _exec_to_create_env(code: str) -> gym.Env[Any, Any]:
 @cli.command(short_help="Record episodes with the saved model.")
 @click.argument("model_path")
 @click.option("--env-id", default=None, help="Gym environment id.")
-@click.option(
-    "--env-header", default=None, help="One-liner to create environment."
-)
+@click.option("--env-header", default=None, help="One-liner to create environment.")
 @click.option("--out", default="videos", help="Output directory path.")
 @click.option("--n-episodes", default=3, help="Number of episodes to record.")
 @click.option(
@@ -260,7 +253,7 @@ def record(
     out: str,
     n_episodes: int,
     target_return: Optional[float],
-    use_gymnasium: bool,
+    use_gymnasium: bool = True,
 ) -> None:
     # load saved model
     print(f"Loading {model_path}...")
@@ -269,10 +262,7 @@ def record(
     # wrap environment with Monitor
     env: gym.Env[Any, Any]
     if env_id is not None:
-        if use_gymnasium:
-            env = gymnasium.make(env_id, render_mode="rgb_array")
-        else:
-            env = gym.make(env_id, render_mode="rgb_array")
+        env = gym.make(env_id, render_mode="rgb_array")
     elif env_header is not None:
         env = _exec_to_create_env(env_header)
     else:
@@ -301,9 +291,7 @@ def record(
 @cli.command(short_help="Run evaluation episodes with rendering.")
 @click.argument("model_path")
 @click.option("--env-id", default=None, help="Gym environment id.")
-@click.option(
-    "--env-header", default=None, help="One-liner to create environment."
-)
+@click.option("--env-header", default=None, help="One-liner to create environment.")
 @click.option("--n-episodes", default=3, help="Number of episodes to run.")
 @click.option(
     "--target-return",
@@ -317,7 +305,7 @@ def play(
     env_header: Optional[str],
     n_episodes: int,
     target_return: Optional[float],
-    use_gymnasium: bool,
+    use_gymnasium: bool = True,
 ) -> None:
     # load saved model
     print(f"Loading {model_path}...")
@@ -326,10 +314,7 @@ def play(
     # wrap environment with Monitor
     env: gym.Env[Any, Any]
     if env_id is not None:
-        if use_gymnasium:
-            env = gymnasium.make(env_id, render_mode="human")
-        else:
-            env = gym.make(env_id, render_mode="human")
+        env = gym.make(env_id, render_mode="human")
     elif env_header is not None:
         env = _exec_to_create_env(env_header)
     else:
@@ -350,9 +335,7 @@ def play(
     print(f"Score: {score}")
 
 
-def _install_module(
-    name: list[str], upgrade: bool = False, check: bool = True
-) -> None:
+def _install_module(name: list[str], upgrade: bool = False, check: bool = True) -> None:
     name = ["-U", *name] if upgrade else name
     subprocess.run(["pip3", "install", *name], check=check)
 

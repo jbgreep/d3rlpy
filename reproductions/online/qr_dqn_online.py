@@ -1,6 +1,6 @@
 import argparse
 
-import gym
+import gymnasium as gym
 
 import d3rlpy
 
@@ -28,9 +28,7 @@ def main() -> None:
         learning_rate=5e-5,
         optim_factory=d3rlpy.optimizers.AdamFactory(eps=1e-2 / 32),
         target_update_interval=10000 // 4,
-        q_func_factory=d3rlpy.models.q_functions.QRQFunctionFactory(
-            n_quantiles=200
-        ),
+        q_func_factory=d3rlpy.models.q_functions.QRQFunctionFactory(n_quantiles=200),
         observation_scaler=d3rlpy.preprocessing.PixelObservationScaler(),
         compile_graph=args.compile,
     ).create(device=args.gpu)

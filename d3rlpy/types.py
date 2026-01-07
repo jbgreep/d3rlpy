@@ -1,7 +1,6 @@
 from typing import Any, Mapping, Protocol, Sequence, Union, runtime_checkable
 
-import gym
-import gymnasium
+import gymnasium as gym
 import numpy as np
 import numpy.typing as npt
 import torch
@@ -33,7 +32,7 @@ ObservationSequence = Union[NDArray, Sequence[NDArray]]
 Shape = Union[Sequence[int], Sequence[Sequence[int]]]
 TorchObservation = Union[torch.Tensor, Sequence[torch.Tensor]]
 
-GymEnv = Union[gym.Env[Any, Any], gymnasium.Env[Any, Any]]
+GymEnv = gym.Env[Any, Any]
 
 
 @runtime_checkable

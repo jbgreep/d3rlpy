@@ -62,9 +62,9 @@ def test_min_max_observation_scaler(
     # check transform
     x = torch.rand((batch_size, *observation_shape))
     y = scaler.transform(x)
-    ref_y = (x.numpy() - minimum.reshape((1, -1))) / (
-        maximum - minimum
-    ).reshape((1, -1))
+    ref_y = (x.numpy() - minimum.reshape((1, -1))) / (maximum - minimum).reshape(
+        (1, -1)
+    )
     assert np.allclose(y.numpy(), ref_y * 2.0 - 1.0, atol=1e-6)
 
     # check reverse_transform

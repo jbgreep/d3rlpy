@@ -8,14 +8,14 @@ exec(open(os.path.join(here, "d3rlpy", "_version.py")).read())
 
 if __name__ == "__main__":
     setup(
-        name="d3rlpy",
+        name="d3rlpy_marin",
         version=__version__,  # noqa
-        description="An offline deep reinforcement learning library",
+        description="An offline deep reinforcement learning library without Gym",
         long_description=open("README.md").read(),
         long_description_content_type="text/markdown",
-        url="https://github.com/takuseno/d3rlpy",
-        author="Takuma Seno",
-        author_email="takuma.seno@gmail.com",
+        url="https://github.com/jbgreep/d3rlpy",
+        author="Justin Greep",
+        author_email="j.greep@marin.nl",
         license="MIT License",
         classifiers=[
             "Development Status :: 5 - Production/Stable",
@@ -36,13 +36,12 @@ if __name__ == "__main__":
             "torch>=2.5.0",
             "tqdm>=4.66.3",
             "h5py",
-            "gym>=0.26.0",
             "click",
             "typing-extensions",
             "structlog",
             "colorama",
             "dataclasses-json",
-            "gymnasium==1.0.0",
+            "gymnasium>=1.0.0",
             "scikit-learn",
         ],
         packages=find_packages(exclude=["tests*"]),

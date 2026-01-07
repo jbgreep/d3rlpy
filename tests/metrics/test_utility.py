@@ -2,10 +2,10 @@ from functools import reduce
 from operator import mul
 from typing import Any, Optional, Sequence
 
-import gym
+import gymnasium as gym
 import numpy as np
 import pytest
-from gym import spaces
+from gymnasium import spaces
 
 from d3rlpy.metrics.utility import evaluate_qlearning_with_environment
 from d3rlpy.preprocessing import ActionScaler, ObservationScaler, RewardScaler
@@ -59,9 +59,7 @@ class DummyEnv(gym.Env[NDArray, NDArray]):
         self.episode = 0
         self.episode_length = episode_length
         self.observations = observations
-        self.observation_space = spaces.Box(
-            low=0, high=255, shape=observation_shape
-        )
+        self.observation_space = spaces.Box(low=0, high=255, shape=observation_shape)
 
     def step(
         self, action: NDArray

@@ -3,8 +3,7 @@ from typing import Optional, Sequence
 
 import numpy as np
 import torch
-from gym.spaces import Box
-from gymnasium.spaces import Box as GymnasiumBox
+from gymnasium.spaces import Box
 
 from ..dataset import (
     EpisodeBase,
@@ -99,9 +98,7 @@ class MinMaxActionScaler(ActionScaler):
         minimum = np.zeros(episodes[0].action_signature.shape[0])
         maximum = np.zeros(episodes[0].action_signature.shape[0])
         for i, episode in enumerate(episodes):
-            traj = trajectory_slicer(
-                episode, episode.size() - 1, episode.size()
-            )
+            traj = trajectory_slicer(episode, episode.size() - 1, episode.size())
             actions = np.asarray(traj.actions)
             min_action = np.min(actions, axis=0)
             max_action = np.max(actions, axis=0)
@@ -116,7 +113,7 @@ class MinMaxActionScaler(ActionScaler):
 
     def fit_with_env(self, env: GymEnv) -> None:
         assert not self.built
-        assert isinstance(env.action_space, (Box, GymnasiumBox))
+        assert isinstance(env.action_space, Box)
         low = np.asarray(env.action_space.low)
         high = np.asarray(env.action_space.high)
         self.minimum = low
@@ -126,9 +123,7 @@ class MinMaxActionScaler(ActionScaler):
         assert self.built
         if self._torch_minimum is None or self._torch_maximum is None:
             self._set_torch_value(x.device)
-        assert (
-            self._torch_minimum is not None and self._torch_maximum is not None
-        )
+        assert self._torch_minimum is not None and self._torch_maximum is not None
         minimum = add_leading_dims(self._torch_minimum, target=x)
         maximum = add_leading_dims(self._torch_maximum, target=x)
         # transform action into [-1.0, 1.0]
@@ -138,9 +133,7 @@ class MinMaxActionScaler(ActionScaler):
         assert self.built
         if self._torch_minimum is None or self._torch_maximum is None:
             self._set_torch_value(x.device)
-        assert (
-            self._torch_minimum is not None and self._torch_maximum is not None
-        )
+        assert self._torch_minimum is not None and self._torch_maximum is not None
         minimum = add_leading_dims(self._torch_minimum, target=x)
         maximum = add_leading_dims(self._torch_maximum, target=x)
         # transform action from [-1.0, 1.0]

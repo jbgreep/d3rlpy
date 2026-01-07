@@ -3,8 +3,7 @@ from typing import Optional, Sequence
 
 import numpy as np
 import torch
-from gym.spaces import Box
-from gymnasium.spaces import Box as GymnasiumBox
+from gymnasium.spaces import Box
 
 from ..dataset import (
     Episode,
@@ -161,9 +160,7 @@ class MinMaxObservationScaler(ObservationScaler):
         maximum = np.zeros(episodes[0].observation_signature.shape[0])
         minimum = np.zeros(episodes[0].observation_signature.shape[0])
         for i, episode in enumerate(episodes):
-            traj = trajectory_slicer(
-                episode, episode.size() - 1, episode.size()
-            )
+            traj = trajectory_slicer(episode, episode.size() - 1, episode.size())
             observations = np.asarray(traj.observations)
             max_observation = np.max(observations, axis=0)
             min_observation = np.min(observations, axis=0)
@@ -178,7 +175,7 @@ class MinMaxObservationScaler(ObservationScaler):
 
     def fit_with_env(self, env: GymEnv) -> None:
         assert not self.built
-        assert isinstance(env.observation_space, (Box, GymnasiumBox))
+        assert isinstance(env.observation_space, Box)
         low = np.asarray(env.observation_space.low)
         high = np.asarray(env.observation_space.high)
         self.minimum = low
@@ -188,9 +185,7 @@ class MinMaxObservationScaler(ObservationScaler):
         assert self.built
         if self._torch_maximum is None or self._torch_minimum is None:
             self._set_torch_value(x.device)
-        assert (
-            self._torch_minimum is not None and self._torch_maximum is not None
-        )
+        assert self._torch_minimum is not None and self._torch_maximum is not None
         minimum = add_leading_dims(self._torch_minimum, target=x)
         maximum = add_leading_dims(self._torch_maximum, target=x)
         return (x - minimum) / (maximum - minimum) * 2.0 - 1.0
@@ -199,9 +194,7 @@ class MinMaxObservationScaler(ObservationScaler):
         assert self.built
         if self._torch_maximum is None or self._torch_minimum is None:
             self._set_torch_value(x.device)
-        assert (
-            self._torch_minimum is not None and self._torch_maximum is not None
-        )
+        assert self._torch_minimum is not None and self._torch_maximum is not None
         minimum = add_leading_dims(self._torch_minimum, target=x)
         maximum = add_leading_dims(self._torch_maximum, target=x)
         return ((maximum - minimum) * (x + 1.0) / 2.0) + minimum
@@ -316,9 +309,7 @@ class StandardObservationScaler(ObservationScaler):
         total_sum = np.zeros(episodes[0].observation_signature.shape[0])
         total_count = 0
         for episode in episodes:
-            traj = trajectory_slicer(
-                episode, episode.size() - 1, episode.size()
-            )
+            traj = trajectory_slicer(episode, episode.size() - 1, episode.size())
             total_sum += np.sum(traj.observations, axis=0)
             total_count += episode.size()
         mean = total_sum / total_count
@@ -327,9 +318,7 @@ class StandardObservationScaler(ObservationScaler):
         total_sqsum = np.zeros(episodes[0].observation_signature.shape[0])
         expanded_mean = mean.reshape((1,) + mean.shape)
         for episode in episodes:
-            traj = trajectory_slicer(
-                episode, episode.size() - 1, episode.size()
-            )
+            traj = trajectory_slicer(episode, episode.size() - 1, episode.size())
             observations = np.asarray(traj.observations)
             total_sqsum += np.sum((observations - expanded_mean) ** 2, axis=0)
         std = np.sqrt(total_sqsum / total_count)
@@ -338,9 +327,7 @@ class StandardObservationScaler(ObservationScaler):
         self.std = std
 
     def fit_with_env(self, env: GymEnv) -> None:
-        raise NotImplementedError(
-            "standard scaler does not support fit_with_env."
-        )
+        raise NotImplementedError("standard scaler does not support fit_with_env.")
 
     def transform(self, x: torch.Tensor) -> torch.Tensor:
         assert self.built
@@ -376,12 +363,8 @@ class StandardObservationScaler(ObservationScaler):
         return ((std + self.eps) * x) + mean
 
     def _set_torch_value(self, device: torch.device) -> None:
-        self._torch_mean = torch.tensor(
-            self.mean, dtype=torch.float32, device=device
-        )
-        self._torch_std = torch.tensor(
-            self.std, dtype=torch.float32, device=device
-        )
+        self._torch_mean = torch.tensor(self.mean, dtype=torch.float32, device=device)
+        self._torch_std = torch.tensor(self.std, dtype=torch.float32, device=device)
 
     @staticmethod
     def get_type() -> str:
@@ -413,9 +396,7 @@ class TupleObservationScaler(ObservationScaler):
             List of observation scalers.
     """
 
-    observation_scalers: Sequence[ObservationScaler] = (
-        observation_scaler_list_field()
-    )
+    observation_scalers: Sequence[ObservationScaler] = observation_scaler_list_field()
 
     def fit_with_transition_picker(
         self,

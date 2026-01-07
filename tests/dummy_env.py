@@ -1,8 +1,8 @@
 from typing import Any
 
-import gym
+import gymnasium as gym
 import numpy as np
-from gym.spaces import Box, Discrete
+from gymnasium.spaces import Box, Discrete
 
 from d3rlpy.types import NDArray
 
@@ -21,9 +21,7 @@ class DummyAtari(gym.Env[NDArray, int]):
         self.action_space = Discrete(4)
         self.t = 1
 
-    def step(
-        self, action: int
-    ) -> tuple[NDArray, float, bool, bool, dict[str, Any]]:
+    def step(self, action: int) -> tuple[NDArray, float, bool, bool, dict[str, Any]]:
         observation = self.observation_space.sample()
         reward = np.random.random()
         return observation, reward, False, self.t % 80 == 0, {}

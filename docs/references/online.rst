@@ -10,7 +10,7 @@ enough to be trained in an online manner with a few more utilities.
 .. code-block:: python
 
     import d3lpy
-    import gym
+    import gymnasium as gym
 
     # setup environment
     env = gym.make('CartPole-v1')

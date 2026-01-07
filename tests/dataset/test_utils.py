@@ -1,7 +1,6 @@
-from typing import Any, Sequence, Union, cast
+from typing import Any, Sequence, cast
 
-import gym
-import gymnasium
+import gymnasium as gym
 import numpy as np
 import pytest
 
@@ -142,9 +141,7 @@ def test_stack_recent_observations(
 ) -> None:
     observations = create_observations(observation_shape, length)
 
-    stacked_observation = stack_recent_observations(
-        observations, index, n_frames
-    )
+    stacked_observation = stack_recent_observations(observations, index, n_frames)
 
     if isinstance(stacked_observation, list):
         for i, shape in enumerate(observation_shape):
@@ -215,17 +212,12 @@ def test_get_shape_from_observation_sequence(
     observation_shape: Shape, length: int
 ) -> None:
     observations = create_observations(observation_shape, length)
-    assert (
-        tuple(get_shape_from_observation_sequence(observations))
-        == observation_shape
-    )
+    assert tuple(get_shape_from_observation_sequence(observations)) == observation_shape
 
 
 @pytest.mark.parametrize("observation_shape", [(4,), ((4,), (8,)), (3, 84, 84)])
 @pytest.mark.parametrize("dtype", [np.float32, np.float16])
-def test_get_dtype_from_observation(
-    observation_shape: Shape, dtype: DType
-) -> None:
+def test_get_dtype_from_observation(observation_shape: Shape, dtype: DType) -> None:
     observation = create_observation(observation_shape, dtype=dtype)
     dtypes = get_dtype_from_observation(observation)
     if isinstance(dtypes, np.dtype):
@@ -294,32 +286,16 @@ def test_detect_action_space() -> None:
 
 
 def test_detect_action_space_from_env() -> None:
-    env: Union[gym.Env[Any, Any], gymnasium.Env[Any, Any]] = gym.make(
-        "CartPole-v1"
-    )
+    env: gym.Env[Any, Any] = gym.make("CartPole-v1")
     assert detect_action_space_from_env(env) == ActionSpace.DISCRETE
 
     env = gym.make("Pendulum-v1")
-    assert detect_action_space_from_env(env) == ActionSpace.CONTINUOUS
-
-    env = gymnasium.make("CartPole-v1")
-    assert detect_action_space_from_env(env) == ActionSpace.DISCRETE
-
-    env = gymnasium.make("Pendulum-v1")
     assert detect_action_space_from_env(env) == ActionSpace.CONTINUOUS
 
 
 def test_detect_action_size_from_env() -> None:
-    env: Union[gym.Env[Any, Any], gymnasium.Env[Any, Any]] = gym.make(
-        "CartPole-v1"
-    )
+    env: gym.Env[Any, Any] = gym.make("CartPole-v1")
     assert detect_action_size_from_env(env) == 2
 
     env = gym.make("Pendulum-v1")
-    assert detect_action_size_from_env(env) == 1
-
-    env = gymnasium.make("CartPole-v1")
-    assert detect_action_size_from_env(env) == 2
-
-    env = gymnasium.make("Pendulum-v1")
     assert detect_action_size_from_env(env) == 1

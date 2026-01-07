@@ -95,7 +95,7 @@ example::
 
   # record wrapped environment
   $ d3rlpy record d3rlpy_logs/Discrete_CQL_20201224224314/model_100.d3 \
-      --env-header 'import gym; from d3rlpy.envs import Atari; env = Atari(gym.make("BreakoutNoFrameskip-v4", render_mode="rgb_array"), is_eval=True)'
+      --env-header 'import gymnasium as gym; from d3rlpy.envs import Atari; env = Atari(gym.make("BreakoutNoFrameskip-v4", render_mode="rgb_array"), is_eval=True)'
 
 play
 ----

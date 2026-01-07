@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 
-import gym
+import gymnasium as gym
+
 import d3rlpy
 
 d3rlpy.seed(100)
 
 # prepare environment
-env = gym.make('Pendulum-v0')
-eval_env = gym.make('Pendulum-v0')
+env = gym.make("Pendulum-v0")
+eval_env = gym.make("Pendulum-v0")
 
 # prepare algorithms
-sac = d3rlpy.algos.SAC(action_scaler='min_max')
+sac = d3rlpy.algos.SAC(action_scaler="min_max")
 
 # prepare utilities
 buffer = d3rlpy.online.buffers.ReplayBuffer(maxlen=1000000, env=env)
@@ -22,4 +23,4 @@ sac.fit_online(env, buffer=buffer, eval_env=eval_env, n_steps=100000)
 dataset = buffer.to_mdp_dataset()
 
 # save MDPDataset
-dataset.dump('pendulum.h5')
+dataset.dump("pendulum.h5")

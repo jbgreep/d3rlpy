@@ -2,9 +2,7 @@ from typing import Any, Sequence, TypeVar, Union, overload
 
 import numpy as np
 import numpy.typing as npt
-from gym.spaces import Box, Discrete
-from gymnasium.spaces import Box as GymnasiumBox
-from gymnasium.spaces import Discrete as GymnasiumDiscrete
+from gymnasium.spaces import Box, Discrete
 
 from ..constants import ActionSpace
 from ..types import (
@@ -52,9 +50,7 @@ def retrieve_observation(
 ) -> Sequence[NDArray]: ...
 
 
-def retrieve_observation(
-    observations: ObservationSequence, index: int
-) -> Observation:
+def retrieve_observation(observations: ObservationSequence, index: int) -> Observation:
     if isinstance(observations, np.ndarray):
         return observations[index]  # type: ignore
     elif isinstance(observations, (list, tuple)):
@@ -83,9 +79,7 @@ def create_zero_observation(observation: Observation) -> Observation:
 
 
 @overload
-def slice_observations(
-    observations: NDArray, start: int, end: int
-) -> NDArray: ...
+def slice_observations(observations: NDArray, start: int, end: int) -> NDArray: ...
 
 
 @overload
@@ -108,9 +102,7 @@ def slice_observations(
 _TDType = TypeVar("_TDType", bound=Any)
 
 
-def batch_pad_array(
-    array: npt.NDArray[_TDType], pad_size: int
-) -> npt.NDArray[_TDType]:
+def batch_pad_array(array: npt.NDArray[_TDType], pad_size: int) -> npt.NDArray[_TDType]:
     batch_size = array.shape[0]
     shape = array.shape[1:]
     padded_array = np.zeros((pad_size + batch_size, *shape), dtype=array.dtype)
@@ -200,8 +192,7 @@ def stack_observations(observations: Sequence[Observation]) -> Observation:
     if isinstance(observations[0], (list, tuple)):
         obs_kinds = len(observations[0])
         return [
-            np.stack([obs[i] for obs in observations], axis=0)
-            for i in range(obs_kinds)
+            np.stack([obs[i] for obs in observations], axis=0) for i in range(obs_kinds)
         ]
     elif isinstance(observations[0], np.ndarray):
         return np.stack(observations, axis=0)
@@ -314,9 +305,7 @@ def check_non_1d_array(array: Union[NDArray, Sequence[NDArray]]) -> bool:
 
 
 @overload
-def cast_recursively(
-    array: NDArray, dtype: type[_TDType]
-) -> npt.NDArray[_TDType]: ...
+def cast_recursively(array: NDArray, dtype: type[_TDType]) -> npt.NDArray[_TDType]: ...
 
 
 @overload
@@ -344,9 +333,9 @@ def detect_action_space(actions: NDArray) -> ActionSpace:
 
 
 def detect_action_space_from_env(env: GymEnv) -> ActionSpace:
-    if isinstance(env.action_space, (Box, GymnasiumBox)):
+    if isinstance(env.action_space, Box):
         action_space = ActionSpace.CONTINUOUS
-    elif isinstance(env.action_space, (Discrete, GymnasiumDiscrete)):
+    elif isinstance(env.action_space, Discrete):
         action_space = ActionSpace.DISCRETE
     else:
         raise ValueError(f"Unsupported action_space: {type(env.action_space)}")
@@ -354,9 +343,9 @@ def detect_action_space_from_env(env: GymEnv) -> ActionSpace:
 
 
 def detect_action_size_from_env(env: GymEnv) -> int:
-    if isinstance(env.action_space, (Discrete, GymnasiumDiscrete)):
+    if isinstance(env.action_space, Discrete):
         action_size = env.action_space.n
-    elif isinstance(env.action_space, (Box, GymnasiumBox)):
+    elif isinstance(env.action_space, Box):
         action_size = env.action_space.shape[0]
     else:
         raise ValueError(f"Unsupported action_space: {type(env.action_space)}")

@@ -12,7 +12,7 @@ def main() -> None:
     parser.add_argument("--gpu", action="store_true")
     args = parser.parse_args()
 
-    # d3rlpy supports both Gym and Gymnasium
+    # d3rlpy supports both Gymnasium
     env = gymnasium.make(args.env)
     eval_env = gymnasium.make(args.env)
 

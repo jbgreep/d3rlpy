@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
-import gym
+import gymnasium as gym
+
 import d3rlpy
 
 d3rlpy.seed(100)
 
 # prepare environment
-env = gym.make('CartPole-v0')
+env = gym.make("CartPole-v0")
 
 # prepare algorithms
 policy = d3rlpy.algos.DiscreteRandomPolicy()
@@ -21,4 +22,4 @@ policy.collect(env, buffer=buffer, n_steps=100000)
 dataset = buffer.to_mdp_dataset()
 
 # save MDPDataset
-dataset.dump('cartpole_random.h5')
+dataset.dump("cartpole_random.h5")

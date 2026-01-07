@@ -92,7 +92,7 @@ You can compose sub-components of ``ReplayBuffer``, ``Buffer``, ``TransitionPick
    # Need to specify signatures of observations, actions and rewards
 
    # Option 1: Initialize with Gym environment
-   import gym
+   import gymnasium as gym
    env = gym.make("Pendulum-v1")
    replay_buffer = d3rlpy.dataset.ReplayBuffer(
       buffer=buffer,

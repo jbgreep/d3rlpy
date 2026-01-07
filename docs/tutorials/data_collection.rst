@@ -14,7 +14,7 @@ In this tutorial, let's use simple CartPole environment.
 
 .. code-block:: python
 
-  import gym
+  import gymnasium as gym
 
   env = gym.make("CartPole-v1")
 

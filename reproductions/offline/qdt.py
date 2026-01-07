@@ -2,7 +2,7 @@ import argparse
 from datetime import datetime
 from typing import Optional, Union
 
-import gym
+import gymnasium as gym
 import numpy as np
 
 import d3rlpy
@@ -43,9 +43,7 @@ def main() -> None:
         # load model and assert type
         q_algo_loaded = d3rlpy.load_learnable(args.model_file)
         if not isinstance(q_algo_loaded, (CQL, IQL)):
-            raise ValueError(
-                "The loaded model is not an instance of CQL or IQL."
-            )
+            raise ValueError("The loaded model is not an instance of CQL or IQL.")
         # cast to the expected type
         q_algo = q_algo_loaded
     else:
@@ -223,9 +221,7 @@ def fit_iql(
     Return:
         Trained IQL agent.
     """
-    reward_scaler = d3rlpy.preprocessing.ReturnBasedRewardScaler(
-        multiplier=1000.0
-    )
+    reward_scaler = d3rlpy.preprocessing.ReturnBasedRewardScaler(multiplier=1000.0)
 
     iql = d3rlpy.algos.IQLConfig(
         actor_learning_rate=3e-4,

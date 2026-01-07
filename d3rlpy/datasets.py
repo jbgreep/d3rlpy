@@ -5,13 +5,10 @@ import re
 from typing import Any, Optional
 from urllib import request
 
-import gym
-import gymnasium
+import gymnasium as gym
 import numpy as np
-from gym.wrappers.time_limit import TimeLimit
-from gymnasium.spaces import Box as GymnasiumBox
-from gymnasium.spaces import Dict as GymnasiumDictSpace
-from gymnasium.wrappers import TimeLimit as GymnasiumTimeLimit
+from gymnasium.spaces import Box, Dict
+from gymnasium.wrappers import TimeLimit
 
 from .dataset import (
     BasicTrajectorySlicer,
@@ -50,9 +47,13 @@ __all__ = [
 DATA_DIRECTORY = "d3rlpy_data"
 DROPBOX_URL = "https://www.dropbox.com/s"
 CARTPOLE_URL = f"{DROPBOX_URL}/uep0lzlhxpi79pd/cartpole_v1.1.0.h5?dl=1"
-CARTPOLE_RANDOM_URL = f"{DROPBOX_URL}/4lgai7tgj84cbov/cartpole_random_v1.1.0.h5?dl=1"  # noqa: E501
+CARTPOLE_RANDOM_URL = (
+    f"{DROPBOX_URL}/4lgai7tgj84cbov/cartpole_random_v1.1.0.h5?dl=1"  # noqa: E501
+)
 PENDULUM_URL = f"{DROPBOX_URL}/ukkucouzys0jkfs/pendulum_v1.1.0.h5?dl=1"
-PENDULUM_RANDOM_URL = f"{DROPBOX_URL}/hhbq9i6ako24kzz/pendulum_random_v1.1.0.h5?dl=1"  # noqa: E501
+PENDULUM_RANDOM_URL = (
+    f"{DROPBOX_URL}/hhbq9i6ako24kzz/pendulum_random_v1.1.0.h5?dl=1"  # noqa: E501
+)
 
 
 def get_cartpole(
@@ -443,9 +444,7 @@ def get_d4rl(
 
         # remove incompatible wrappers
         wrapped_env = env.env.env.env  # type: ignore
-        if isinstance(
-            wrapped_env, (NormalizedBoxEnv, NormalizedBoxEnvFromUtils)
-        ):
+        if isinstance(wrapped_env, (NormalizedBoxEnv, NormalizedBoxEnvFromUtils)):
             unwrapped_env: gym.Env[Any, Any] = wrapped_env.wrapped_env
             unwrapped_env.render_mode = render_mode  # overwrite
         elif isinstance(wrapped_env, MazeEnv):
@@ -453,13 +452,9 @@ def get_d4rl(
         else:
             wrapped_env.env.render_mode = render_mode  # overwrite
 
-        return dataset, TimeLimit(
-            wrapped_env, max_episode_steps=max_episode_steps
-        )
+        return dataset, TimeLimit(wrapped_env, max_episode_steps=max_episode_steps)
     except ImportError as e:
-        raise ImportError(
-            "d4rl is not installed.\n" "$ d3rlpy install d4rl"
-        ) from e
+        raise ImportError("d4rl is not installed.\n" "$ d3rlpy install d4rl") from e
 
 
 class _MinariEnvType(enum.Enum):
@@ -473,7 +468,7 @@ def get_minari(
     trajectory_slicer: Optional[TrajectorySlicerProtocol] = None,
     render_mode: Optional[str] = None,
     tuple_observation: bool = False,
-) -> tuple[ReplayBuffer, gymnasium.Env[Any, Any]]:
+) -> tuple[ReplayBuffer, gym.Env[Any, Any]]:
     """Returns minari dataset and envrironment.
 
     The dataset is provided through minari.
@@ -500,10 +495,10 @@ def get_minari(
         unwrapped_env = env.unwrapped
         unwrapped_env.render_mode = render_mode
 
-        if isinstance(env.observation_space, GymnasiumBox):
+        if isinstance(env.observation_space, Box):
             env_type = _MinariEnvType.BOX
         elif (
-            isinstance(env.observation_space, GymnasiumDictSpace)
+            isinstance(env.observation_space, Dict)
             and "observation" in env.observation_space.spaces
             and "desired_goal" in env.observation_space.spaces
         ):
@@ -512,9 +507,7 @@ def get_minari(
                 unwrapped_env, tuple_observation=tuple_observation
             )
         else:
-            raise ValueError(
-                f"Unsupported observation space: {env.observation_space}"
-            )
+            raise ValueError(f"Unsupported observation space: {env.observation_space}")
 
         observations = []
         actions = []
@@ -528,14 +521,9 @@ def get_minari(
             elif env_type == _MinariEnvType.GOAL_CONDITIONED:
                 assert isinstance(ep.observations, dict)
                 if isinstance(ep.observations["desired_goal"], dict):
-                    sorted_keys = sorted(
-                        list(ep.observations["desired_goal"].keys())
-                    )
+                    sorted_keys = sorted(list(ep.observations["desired_goal"].keys()))
                     goal_obs = np.concatenate(
-                        [
-                            ep.observations["desired_goal"][key]
-                            for key in sorted_keys
-                        ],
+                        [ep.observations["desired_goal"][key] for key in sorted_keys],
                         axis=-1,
                     )
                 else:
@@ -576,14 +564,12 @@ def get_minari(
             trajectory_slicer=trajectory_slicer,
         )
 
-        return dataset, GymnasiumTimeLimit(
+        return dataset, TimeLimit(
             unwrapped_env, max_episode_steps=env.spec.max_episode_steps
         )
 
     except ImportError as e:
-        raise ImportError(
-            "minari is not installed.\n" "$ d3rlpy install minari"
-        ) from e
+        raise ImportError("minari is not installed.\n" "$ d3rlpy install minari") from e
 
 
 ATARI_GAMES = [
