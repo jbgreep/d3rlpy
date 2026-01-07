@@ -4,7 +4,7 @@ from setuptools import find_packages, setup
 
 # get __version__ variable
 here = os.path.abspath(os.path.dirname(__file__))
-exec(open(os.path.join(here, "d3rlpy", "_version.py")).read())
+exec(open(os.path.join(here, "d3rlpy_marin", "_version.py")).read())
 
 if __name__ == "__main__":
     setup(
