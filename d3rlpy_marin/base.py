@@ -290,6 +290,31 @@ class LearnableBase(Generic[TImpl_co, TConfig_co], metaclass=ABCMeta):
         config = LearnableConfigWithShape.deserialize_from_file(fname)
         return config.create(device)  # type: ignore
 
+    @classmethod
+    def from_dict(
+        cls: type[Self], dict_config: dict, device: DeviceArg = False
+    ) -> Self:
+        r"""Construct algorithm from dict with same structure as a JSON config file.
+
+        .. code-block:: python
+
+            from d3rlpy.algos import CQL
+
+            cql = CQL.from_dict(config_dict, device='cuda:0')
+
+        Args:
+            dict_config: dict with same structure as JSON config file.
+            device (Union[int, str, bool]): device option. If the value is
+                boolean and True, ``cuda:0`` will be used. If the value is
+                integer, ``cuda:<device>`` will be used. If the value is string
+                in torch device style, the specified device will be used.
+
+        Returns:
+            algorithm object.
+        """
+        config = LearnableConfigWithShape.deserialize_from_dict(dict_config)
+        return config.create(device)  # type: ignore
+
     def create_impl(self, observation_shape: Shape, action_size: int) -> None:
         """Instantiate implementation objects with the dataset shapes.
 

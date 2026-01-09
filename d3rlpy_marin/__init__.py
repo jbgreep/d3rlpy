@@ -1,7 +1,6 @@
 # pylint: disable=protected-access
 import random
 
-import gymnasium
 import numpy as np
 import torch
 
@@ -73,12 +72,3 @@ if torch.cuda.is_available():
     # enable autograd compilation
     torch._dynamo.config.compiled_autograd = True
     torch.set_float32_matmul_precision("high")
-
-# register Shimmy if available
-try:
-    import shimmy
-
-    gymnasium.register_envs(shimmy)
-    logging.LOG.info("Register Shimmy environments.")
-except ImportError:
-    pass

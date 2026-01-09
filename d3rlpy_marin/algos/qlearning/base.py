@@ -68,9 +68,7 @@ class QLearningAlgoImplBase(ImplBase):
         return self.inner_update(batch, grad_step)
 
     @abstractmethod
-    def inner_update(
-        self, batch: TorchMiniBatch, grad_step: int
-    ) -> dict[str, float]:
+    def inner_update(self, batch: TorchMiniBatch, grad_step: int) -> dict[str, float]:
         pass
 
     @eval_api
@@ -90,9 +88,7 @@ class QLearningAlgoImplBase(ImplBase):
         pass
 
     @eval_api
-    def predict_value(
-        self, x: TorchObservation, action: torch.Tensor
-    ) -> torch.Tensor:
+    def predict_value(self, x: TorchObservation, action: torch.Tensor) -> torch.Tensor:
         return self.inner_predict_value(x, action)
 
     @abstractmethod
@@ -201,9 +197,7 @@ class QLearningAlgoBase(
             ]
             num_inputs = len(self._impl.observation_shape)
         else:
-            dummy_x = torch.rand(
-                1, *self._impl.observation_shape, device=self._device
-            )
+            dummy_x = torch.rand(1, *self._impl.observation_shape, device=self._device)
             num_inputs = 1
 
         # workaround until version 1.6
@@ -218,9 +212,7 @@ class QLearningAlgoBase(
                 observation = observation[0]
 
             if self._config.observation_scaler:
-                observation = self._config.observation_scaler.transform(
-                    observation
-                )
+                observation = self._config.observation_scaler.transform(observation)
 
             action = self._impl.predict_best_action(observation)
 
@@ -272,7 +264,9 @@ class QLearningAlgoBase(
             Greedy actions
         """
         assert self._impl is not None, IMPL_NOT_INITIALIZED_ERROR
-        assert check_non_1d_array(x), "Input must have batch dimension."
+        assert check_non_1d_array(
+            x
+        ), f"Input must have batch dimension, got {np.shape(x)} instead."
 
         torch_x = convert_to_torch_recursively(x, self._device)
 
@@ -326,9 +320,7 @@ class QLearningAlgoBase(
 
             if self.get_action_type() == ActionSpace.CONTINUOUS:
                 if self._config.action_scaler:
-                    torch_action = self._config.action_scaler.transform(
-                        torch_action
-                    )
+                    torch_action = self._config.action_scaler.transform(torch_action)
             elif self.get_action_type() == ActionSpace.DISCRETE:
                 torch_action = torch_action.long()
             else:
@@ -495,9 +487,7 @@ class QLearningAlgoBase(
         if self._impl is None:
             LOG.debug("Building models...")
             action_size = dataset.dataset_info.action_size
-            observation_shape = (
-                dataset.sample_transition().observation_signature.shape
-            )
+            observation_shape = dataset.sample_transition().observation_signature.shape
             if len(observation_shape) == 1:
                 observation_shape = observation_shape[0]  # type: ignore
             self.create_impl(observation_shape, action_size)
@@ -536,9 +526,7 @@ class QLearningAlgoBase(
                 with logger.measure_time("step"):
                     # pick transitions
                     with logger.measure_time("sample_batch"):
-                        batch = dataset.sample_transition_batch(
-                            self._config.batch_size
-                        )
+                        batch = dataset.sample_transition_batch(self._config.batch_size)
 
                     # update parameters
                     with logger.measure_time("algorithm_update"):
@@ -551,9 +539,7 @@ class QLearningAlgoBase(
 
                     # update progress postfix with losses
                     if itr % 10 == 0:
-                        mean_loss = {
-                            k: np.mean(v) for k, v in epoch_loss.items()
-                        }
+                        mean_loss = {k: np.mean(v) for k, v in epoch_loss.items()}
                         range_gen.set_postfix(mean_loss)
 
                 total_step += 1
@@ -730,9 +716,7 @@ class QLearningAlgoBase(
                         for _ in range(n_updates):  # controls UTD ratio
                             # sample mini-batch
                             with logger.measure_time("sample_batch"):
-                                batch = buffer.sample_transition_batch(
-                                    self.batch_size
-                                )
+                                batch = buffer.sample_transition_batch(self.batch_size)
 
                             # update parameters
                             with logger.measure_time("algorithm_update"):
@@ -832,9 +816,7 @@ class QLearningAlgoBase(
                     x = observation.reshape((1,) + observation.shape)
                     action = explorer.sample(self, x, total_step)[0]
                 else:
-                    action = self.sample_action(
-                        np.expand_dims(observation, axis=0)
-                    )[0]
+                    action = self.sample_action(np.expand_dims(observation, axis=0))[0]
 
             # step environment
             next_observation, reward, terminal, truncated, _ = env.step(action)

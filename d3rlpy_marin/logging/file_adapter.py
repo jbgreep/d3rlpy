@@ -56,17 +56,13 @@ class FileAdapter(LoggerAdapter):
         # save dictionary as json file
         params_path = os.path.join(self._logdir, "params.json")
         with open(params_path, "w") as f:
-            json_str = json.dumps(
-                params, default=default_json_encoder, indent=2
-            )
+            json_str = json.dumps(params, default=default_json_encoder, indent=2)
             f.write(json_str)
 
     def before_write_metric(self, epoch: int, step: int) -> None:
         pass
 
-    def write_metric(
-        self, epoch: int, step: int, name: str, value: float
-    ) -> None:
+    def write_metric(self, epoch: int, step: int, name: str, value: float) -> None:
         path = os.path.join(self._logdir, f"{name}.csv")
         with open(path, "a") as f:
             print(f"{epoch},{step},{value}", file=f)
@@ -101,9 +97,7 @@ class FileAdapter(LoggerAdapter):
                 path = os.path.join(self._logdir, f"{name}_grad.csv")
                 with open(path, "w") as f:
                     print(
-                        ",".join(
-                            ["epoch", "step", "min", "max", "mean", "std"]
-                        ),
+                        ",".join(["epoch", "step", "min", "max", "mean", "std"]),
                         file=f,
                     )
 

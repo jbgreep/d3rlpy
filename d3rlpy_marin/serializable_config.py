@@ -64,9 +64,7 @@ class DynamicConfig(SerializableConfig):
 class ConfigMetadata:
     base_cls: type[DynamicConfig]
     encoder: Callable[[DynamicConfig], dict[str, Any]]
-    decoder: Callable[
-        [dict[str, Any]], Union[DynamicConfig, Optional[DynamicConfig]]
-    ]
+    decoder: Callable[[dict[str, Any]], Union[DynamicConfig, Optional[DynamicConfig]]]
     config_list: dict[str, type[DynamicConfig]]
 
     def add_config(self, name: str, new_config: type[DynamicConfig]) -> None:
@@ -80,17 +78,18 @@ CONFIG_STORAGE: dict[type[DynamicConfig], ConfigMetadata] = {}
 def generate_config_registration(
     base_cls: type[TDynamicConfig],
     default_factory: Optional[Callable[[], TDynamicConfig]] = None,
-) -> tuple[
-    Callable[[type[TDynamicConfig]], None], Callable[[], TDynamicConfig]
-]:
+) -> tuple[Callable[[type[TDynamicConfig]], None], Callable[[], TDynamicConfig]]:
     CONFIG_LIST: dict[str, type[TDynamicConfig]] = {}
 
     def register_config(cls: type[TDynamicConfig]) -> None:
         assert issubclass(cls, base_cls)
         type_name = cls.get_type()
         is_registered = type_name in CONFIG_LIST
-        assert not is_registered, f"{type_name} seems to be already registered"
-        CONFIG_LIST[type_name] = cls
+        # assert not is_registered, f"{type_name} seems to be already registered"
+        if not is_registered:
+            CONFIG_LIST[type_name] = cls
+        else:
+            print(f"{type_name} seems to be already registered")
 
     def _encoder(orig_config: TDynamicConfig) -> dict[str, Any]:
         return {
@@ -116,9 +115,7 @@ def generate_config_registration(
         def make_field() -> TDynamicConfig:
             field = cast(
                 TDynamicConfig,
-                dataclasses.field(
-                    metadata=config(encoder=_encoder, decoder=_decoder)
-                ),
+                dataclasses.field(metadata=config(encoder=_encoder, decoder=_decoder)),
             )
             return field
 
