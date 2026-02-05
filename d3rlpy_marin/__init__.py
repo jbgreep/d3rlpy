@@ -21,7 +21,7 @@ from . import (
     types,
 )
 from ._version import __version__
-from .base import load_learnable
+from .base import create_from_dict, load_learnable
 from .constants import ActionSpace, LoggingStrategy, PositionEncodingType
 from .healthcheck import run_healthcheck
 from .torch_utility import Modules, TorchMiniBatch
@@ -43,6 +43,7 @@ __all__ = [
     "types",
     "__version__",
     "load_learnable",
+    "create_from_dict",
     "ActionSpace",
     "LoggingStrategy",
     "PositionEncodingType",

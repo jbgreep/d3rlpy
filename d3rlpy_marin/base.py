@@ -29,6 +29,7 @@ __all__ = [
     "save_config",
     "dump_learnable",
     "load_learnable",
+    "create_from_dict",
     "LearnableBase",
     "LearnableConfig",
     "LearnableConfigWithShape",
@@ -196,6 +197,15 @@ def load_learnable(
         algo = config.create(device=device, enable_ddp=enable_ddp)
         assert algo.impl
         algo.impl.load_model(io.BytesIO(obj["torch"]))
+    return algo
+
+
+def create_from_dict(
+    dict_config: dict, device: DeviceArg = None, enable_ddp: bool = False
+) -> "LearnableBase[ImplBase, LearnableConfig]":
+    config = LearnableConfigWithShape.deserialize_from_dict(dict_config)
+    algo = config.create(device=device, enable_ddp=enable_ddp)
+    assert algo.impl
     return algo
 
 

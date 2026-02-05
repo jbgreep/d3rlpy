@@ -50,13 +50,13 @@ actions = sac.predict(x)
 
 
 ## Installation
-d3rlpy supports Linux, macOS and Windows.
+d3rlpy supports Linux, macOS and Windows. Build the package locally. 
 
 ### Dependencies
 Installing d3rlpy package will install or upgrade the following packages to satisfy requirements:
 - torch>=2.5.0
 - tqdm>=4.66.3
-- gymnasium==1.0.0
+- gymnasium>=1.0.0
 - click
 - colorama
 - dataclasses-json
@@ -64,25 +64,6 @@ Installing d3rlpy package will install or upgrade the following packages to sati
 - structlog
 - typing-extensions
 - scikit-learn
-
-### PyPI (recommended)
-[![PyPI version](https://badge.fury.io/py/d3rlpy.svg)](https://badge.fury.io/py/d3rlpy)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/d3rlpy)
-```
-$ pip install d3rlpy
-```
-### Anaconda
-[![Anaconda-Server Badge](https://anaconda.org/conda-forge/d3rlpy/badges/version.svg)](https://anaconda.org/conda-forge/d3rlpy)
-[![Anaconda-Server Badge](https://anaconda.org/conda-forge/d3rlpy/badges/downloads.svg)](https://anaconda.org/conda-forge/d3rlpy)
-```
-$ conda install conda-forge/noarch::d3rlpy
-```
-
-### Docker
-![Docker Pulls](https://img.shields.io/docker/pulls/takuseno/d3rlpy)
-```
-$ docker run -it --gpus all --name d3rlpy takuseno/d3rlpy:latest bash
-```
 
 ## Supported algorithms
 | algorithm | discrete control | continuous control |
@@ -202,8 +183,7 @@ Try cartpole examples on Google Colaboratory!
 More tutorial documentations are available [here](https://d3rlpy.readthedocs.io/en/stable/tutorials/index.html).
 
 ## Contributions
-Any kind of contribution to d3rlpy would be highly appreciated!
-Please check the [contribution guide](CONTRIBUTING.md).
+This fork will be maintained and expanded based on personal needs and wishes. 
 
 ## Community
 | Channel | Link |
@@ -218,9 +198,6 @@ Please check the [contribution guide](CONTRIBUTING.md).
 |:-:|:-|
 | [MINERVA](https://github.com/takuseno/minerva) | An out-of-the-box GUI tool for offline RL |
 | [SCOPE-RL](https://github.com/hakuhodo-technologies/scope-rl) | An off-policy evaluation and selection library |
-
-## Roadmap
-The roadmap to the future release is available in [ROADMAP.md](ROADMAP.md).
 
 ## Citation
 The paper is available [here](https://arxiv.org/abs/2111.03788).
