@@ -1,3 +1,4 @@
+import csv
 from abc import ABC, abstractmethod
 from typing import BinaryIO, Optional, Sequence, Union
 
@@ -359,9 +360,7 @@ class ReplayBuffer(ReplayBufferBase):
         trajectory_slicer = trajectory_slicer or BasicTrajectorySlicer()
         writer_preprocessor = writer_preprocessor or BasicWriterPreprocess()
 
-        if not (
-            observation_signature and action_signature and reward_signature
-        ):
+        if not (observation_signature and action_signature and reward_signature):
             if episodes:
                 observation_signature = episodes[0].observation_signature
                 action_signature = episodes[0].action_signature
@@ -413,9 +412,7 @@ class ReplayBuffer(ReplayBufferBase):
                 else:
                     max_action = 0
                     for episode in episodes:
-                        max_action = max(
-                            int(np.max(episode.actions)), max_action
-                        )
+                        max_action = max(int(np.max(episode.actions)), max_action)
                     action_size = max_action + 1  # index should start from 0
             elif env:
                 action_size = detect_action_size_from_env(env)
@@ -492,6 +489,74 @@ class ReplayBuffer(ReplayBufferBase):
 
     def dump(self, f: BinaryIO) -> None:
         dump(self._buffer.episodes, f)
+
+    def to_csv(self, f, state_labels: list = None, action_labels: list = None) -> None:
+        """Dump contents of buffer to a csv file.
+
+        Each variable in the observation, action, and next observation has its own
+        column. The name of those columns can be customized with the `state_labels` and
+        `action_labels` parameters.
+
+        Parameters
+        ----------
+        f : str
+            path to csv file to dump in.
+        state_labels : list of str
+            names of state variable columns in the csv file.
+        action_labels : list of str
+            names of action variable columns in the csv file.
+        """
+        obs_shape = self._dataset_info.observation_signature.shape[0]
+        action_shape = self._dataset_info.action_signature.shape[0]
+        if state_labels is not None:
+            if len(state_labels) != obs_shape[-1]:
+                raise ValueError(
+                    "state_labels must have an equal number of string elements as observation shape."
+                )
+        else:
+            state_labels = [f"s_{x}" for x in range(obs_shape[-1])]
+        if action_labels is not None:
+            if len(action_labels) != action_shape[-1]:
+                raise ValueError(
+                    "action_labels must have an equal number of string elements as action shape."
+                )
+        else:
+            action_labels = [f"a_{x}" for x in range(action_shape[-1])]
+
+        if self.size() >= self.transition_count:
+            raise ValueError(
+                "CSV dump requires more than 1 transition in at least one episode."
+            )
+
+        next_state_labels = ["N" + x for x in state_labels]
+
+        writer = csv.writer(f, lineterminator='\n')
+        writer.writerow(
+            state_labels
+            + action_labels
+            + ["Reward"]
+            + next_state_labels
+            + ["Terminated"],
+        )
+
+        for ep in self.episodes:
+            if ep.size() > 1:
+                # Last state in the episode is terminated:
+                terminals = np.zeros((ep.size() - 1, 1))
+                terminals[-1][0] = 1
+
+                # Concat all obss, acts, rews, next_obss
+                total_row = np.concatenate(
+                    (
+                        ep.observations[:-1],
+                        ep.actions[:-1],
+                        ep.rewards[:-1],
+                        ep.observations[1:],
+                        terminals,
+                    ),
+                    axis=-1,
+                )
+                writer.writerows(total_row)
 
     @classmethod
     def from_episode_generator(
@@ -646,9 +711,7 @@ class MixedReplayBuffer(ReplayBufferBase):
             self._secondary_replay_buffer.sample_transition()
             for _ in range(secondary_batch_size)
         ]
-        return TransitionMiniBatch.from_transitions(
-            primary_batches + secondary_batches
-        )
+        return TransitionMiniBatch.from_transitions(primary_batches + secondary_batches)
 
     def sample_trajectory(self, length: int) -> PartialTrajectory:
         raise NotImplementedError(
@@ -707,10 +770,7 @@ class MixedReplayBuffer(ReplayBufferBase):
         )
 
     def size(self) -> int:
-        return (
-            self._primary_replay_buffer.size()
-            + self._secondary_replay_buffer.size()
-        )
+        return self._primary_replay_buffer.size() + self._secondary_replay_buffer.size()
 
     @property
     def buffer(self) -> BufferProtocol:
